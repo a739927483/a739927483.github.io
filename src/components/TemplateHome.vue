@@ -540,7 +540,7 @@ export default {
       
       const container = carouselContainerRef.value
       const containerWidth = container.scrollWidth
-      const carouselWidth = container.clientWidth
+      const carouselWidth = container.parentElement.clientWidth
       
       if (containerWidth <= carouselWidth) return
       
@@ -550,7 +550,7 @@ export default {
       }
       
       carouselInterval = setInterval(() => {
-        currentPosition += 3
+        currentPosition += 2
         
         // 当滚动到末尾时，重置位置
         if (currentPosition >= containerWidth - carouselWidth) {
@@ -1178,17 +1178,14 @@ export default {
 
 .skill-carousel-container {
   display: flex;
-  position: absolute;
-  top: 0;
-  left: 0;
-  transition: transform 0.05s linear;
+  gap: 10px;
+  will-change: transform;
 }
 
 .skill-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 0 8px;
   min-width: 45px;
 }
 
