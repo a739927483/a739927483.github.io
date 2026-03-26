@@ -272,28 +272,27 @@
       <div class="video-player">
         <video ref="video" :src="videoModal.videoUrl" @click="toggleVideoPlay" @play="videoModal.isPlaying = true" @pause="videoModal.isPlaying = false" controls="false">
           <source :src="videoModal.videoUrl" type="video/mp4">
+        </video>
         
-          
-          <!-- 播放按钮覆盖层 -->
-          <div v-if="!videoModal.isPlaying" class="video-play-overlay" @click="toggleVideoPlay">
-            <div class="play-icon-circle">
-              <span class="play-icon">▶</span>
-            </div>
+        <!-- 播放按钮覆盖层 -->
+        <div v-if="!videoModal.isPlaying" class="video-play-overlay" @click="toggleVideoPlay">
+          <div class="play-icon-circle">
+            <span class="play-icon">▶</span>
+          </div>
+        </div>
+        
+        <!-- 自定义控制栏 -->
+        <div class="video-controls">
+          <div class="controls-left">
+            <button class="play-pause-btn" @click="toggleVideoPlay">
+              {{ videoModal.isPlaying ? '❚❚' : '▶' }}
+            </button>
           </div>
           
-          <!-- 自定义控制栏 -->
-          <div class="video-controls">
-            <div class="controls-left">
-              <button class="play-pause-btn" @click="toggleVideoPlay">
-                {{ videoModal.isPlaying ? '❚❚' : '▶' }}
-              </button>
-            </div>
-            
-            <div class="controls-right">
-              <button class="fullscreen-btn" @click="toggleFullscreen">
-                ⛶
-              </button>
-            </div>
+          <div class="controls-right">
+            <button class="fullscreen-btn" @click="toggleFullscreen">
+              ⛶
+            </button>
           </div>
         </div>
       </div>
