@@ -152,9 +152,7 @@
             </a>
           </div>
 
-          <div class="tanChiShe">
-            <img id="tanChiShe" src="/svg/snake-Dark.svg" alt="" />
-          </div>
+          
         </header>
       </div>
     </div>
@@ -194,6 +192,9 @@
         </div>
       </div>
       <div class="zww-right">
+        <div class="tanChiShe">
+            <img id="tanChiShe" src="/svg/snake-Dark.svg" alt="" />
+          </div>
         <content>
           <div class="title">
             <svg

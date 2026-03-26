@@ -162,6 +162,16 @@ body {
     flex-direction: column;
 }
 
+.zww-info,
+.zww-content {
+    display: flex;
+    flex-direction: row;
+}
+
+.zww-content {
+    margin-top: 0;
+}
+
 
 .zww-left {
     overflow-y: scroll;
@@ -293,8 +303,8 @@ body {
 .zww-right {
     width: calc(100% - 230px);
     display: flex;
-    padding: 20px;
-  position: relative;
+    padding: 5px 20px;
+    position: relative;
     padding-bottom: 50px;
     flex-direction: column;
 }
