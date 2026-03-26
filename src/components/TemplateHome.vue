@@ -18,7 +18,7 @@
         <div class="left-des-item"><svg t="1705773906032" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2474"><path d="M729.6 234.666667H294.4V157.866667a51.2 51.2 0 0 1 51.2-51.2h332.8a51.2 51.2 0 0 1 51.2 51.2v76.8z m179.2 51.2a51.2 51.2 0 0 1 51.2 51.2v512a51.2 51.2 0 0 1-51.2 51.2H115.2a51.2 51.2 0 0 1-51.2-51.2v-512a51.2 51.2 0 0 1 51.2-51.2h793.557333z m-768 172.032c0 16.384 13.312 29.696 29.696 29.696h683.008a29.696 29.696 0 1 0 0-59.392H170.410667a29.696 29.696 0 0 0-29.696 29.696z m252.416 118.784c0 16.384 13.312 29.696 29.696 29.696h178.176a29.696 29.696 0 1 0 0-59.392H422.912a29.738667 29.738667 0 0 0-29.696 29.696z" p-id="2475"></path></svg>Sias</div>
       </div>
       <div class="left-div left-tag">
-        <div class="tag-container" v-for="t in tags" :key="t">
+        <div class="tag-container" v-for="t in tags" :key="t" @click="handleTagClick(t)">
           {{ t }}
         </div>
       </div>
@@ -155,7 +155,47 @@
     <div onclick="" class="tc-main">
       <img class="tc-img" src="" alt="" srcset="">
     </div>
+  </div>
 
+  <!-- 图片弹窗 -->
+  <div class="tag-modal" v-if="imageModal.isOpen">
+    <div class="modal-overlay" @click="closeImageModal"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>{{ imageModal.title }}</h3>
+        <button class="close-btn" @click="closeImageModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>{{ imageModal.danmakuText }}</p>
+        <div class="image-container">
+          <img v-if="imageModal.images.length > 0" :src="imageModal.images[0]" alt="图片">
+          <p v-else>暂无图片</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 音乐弹窗 -->
+  <div class="tag-modal" v-if="musicModal.isOpen">
+    <div class="modal-overlay" @click="closeMusicModal"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>{{ musicModal.title }}</h3>
+        <button class="close-btn" @click="closeMusicModal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="music-container">
+          <img :src="musicModal.cover" alt="封面" class="music-cover">
+          <div class="music-info">
+            <h4>{{ musicModal.title }}</h4>
+            <p>{{ musicModal.author }}</p>
+          </div>
+          <audio controls v-if="musicModal.musicUrl">
+            <source :src="musicModal.musicUrl" type="audio/mpeg">
+          </audio>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -179,6 +219,73 @@ const TEMPL_TAGS = [
   '不良人天罡传',
   '鬼灭之刃',
 ]
+
+const tagConfigs = {
+  '做饭': {
+    type: 'image',
+    config: {
+      title: '做饭',
+      images: [],
+      danmakuText: '好吃',
+    },
+  },
+  '摄影': {
+    type: 'image',
+    config: {
+      title: '摄影作品',
+      images: [],
+      danmakuText: '好看',
+    },
+  },
+  '美食': {
+    type: 'image',
+    config: {
+      title: '美食',
+      images: [],
+      danmakuText: '好吃',
+    },
+  },
+  '五哈': {
+    type: 'music',
+    config: {
+      title: 'wuha',
+      musicUrl: '',
+      cover: '/images/wuha.jpg',
+      author: '邓超&陈赫&鹿晗&范志毅&宝石Gem&王勉',
+      danmakuText: '好听',
+    },
+  },
+  '天空中的歌': {
+    type: 'music',
+    config: {
+      title: '天空中的歌',
+      musicUrl: '',
+      cover: '/images/tkzdg.jpg',
+      author: '崔一乔',
+      danmakuText: '好听',
+    },
+  },
+  '鲜花': {
+    type: 'music',
+    config: {
+      title: '鲜花',
+      musicUrl: '',
+      cover: '/images/xh.jpg',
+      author: '回春丹乐队',
+      danmakuText: '好听',
+    },
+  },
+  '音乐': {
+    type: 'music',
+    config: {
+      title: '音乐播放器',
+      musicUrl: '/music/sample.mp3',
+      cover: '/images/avatar.png',
+      author: '未知艺术家',
+      danmakuText: '好听',
+    },
+  },
+}
 
 export default {
   name: 'TemplateHome',
@@ -212,6 +319,23 @@ export default {
       const day = String(d.getDate()).padStart(2, '0')
       return `${y}-${m}-${day}`
     }
+
+    // 标签弹窗状态
+    const imageModal = reactive({
+      isOpen: false,
+      title: '',
+      images: [],
+      danmakuText: '',
+    })
+
+    const musicModal = reactive({
+      isOpen: false,
+      title: '',
+      musicUrl: '',
+      cover: '',
+      author: '',
+      danmakuText: '',
+    })
 
     // 日间/夜间模式切换
     const isDarkMode = ref(false)
@@ -266,12 +390,47 @@ export default {
       }
     }
 
+    // 标签点击处理函数
+    const handleTagClick = (tagName) => {
+      const tagConfig = tagConfigs[tagName]
+      if (!tagConfig) {
+        return
+      }
+
+      switch (tagConfig.type) {
+        case 'image':
+          Object.assign(imageModal, {
+            isOpen: true,
+            ...tagConfig.config
+          })
+          break
+        case 'music':
+          Object.assign(musicModal, {
+            isOpen: true,
+            ...tagConfig.config
+          })
+          break
+        default:
+          break
+      }
+    }
+
     // 绑定切换按钮事件
     const bindModeToggle = () => {
       const toggleBtn = document.getElementById('myonoffswitch')
       if (toggleBtn) {
         toggleBtn.addEventListener('change', toggleMode)
       }
+    }
+
+    // 关闭图片弹窗
+    const closeImageModal = () => {
+      imageModal.isOpen = false
+    }
+
+    // 关闭音乐弹窗
+    const closeMusicModal = () => {
+      musicModal.isOpen = false
     }
 
     // 图片弹窗功能
@@ -358,6 +517,11 @@ export default {
       visitors,
       isDarkMode,
       toggleMode,
+      imageModal,
+      musicModal,
+      handleTagClick,
+      closeImageModal,
+      closeMusicModal,
     }
   },
 }
@@ -478,6 +642,127 @@ export default {
 /* 为内容区域添加底部边距，避免被固定页脚遮挡 */
 .zww-right {
   padding-bottom: 80px !important;
+}
+
+/* 标签弹窗样式 */
+.tag-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100000;
+}
+
+.modal-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.modal-content {
+  position: relative;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 15px;
+  padding: 20px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  color: #fff;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.image-container {
+  margin-top: 20px;
+  max-width: 100%;
+}
+
+.image-container img {
+  max-width: 100%;
+  max-height: 400px;
+  border-radius: 8px;
+}
+
+.music-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.music-cover {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.music-info {
+  text-align: center;
+}
+
+.music-info h4 {
+  margin: 0 0 5px 0;
+  font-size: 18px;
+}
+
+.music-info p {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+audio {
+  width: 100%;
+  margin-top: 10px;
 }
 </style>
 
