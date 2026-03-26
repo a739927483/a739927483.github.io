@@ -12,10 +12,17 @@
         <img style="position: absolute;top:-15%;left:-10%;width: 120%; aspect-ratio: 1/1;"
           src="/images/avatar.png">
       </div>
-      <div class="left-div left-des">
-        <div class="left-des-item"><svg t="1705773709627" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1478"><path d="M512 249.976471c-99.388235 0-180.705882 81.317647-180.705882 180.705882s81.317647 180.705882 180.705882 180.705882 180.705882-81.317647 180.705882-180.705882-81.317647-180.705882-180.705882-180.705882z m0 301.17647c-66.258824 0-120.470588-54.211765-120.470588-120.470588s54.211765-120.470588 120.470588-120.470588 120.470588 54.211765 120.470588 120.470588-54.211765 120.470588-120.470588 120.470588z" p-id="1479"></path><path d="M512 39.152941c-216.847059 0-391.529412 174.682353-391.529412 391.529412 0 349.364706 391.529412 572.235294 391.529412 572.235294s391.529412-222.870588 391.529412-572.235294c0-216.847059-174.682353-391.529412-391.529412-391.529412z m0 891.482353C424.658824 873.411765 180.705882 686.682353 180.705882 430.682353c0-183.717647 147.576471-331.294118 331.294118-331.294118s331.294118 147.576471 331.294118 331.294118c0 256-243.952941 442.729412-331.294118 499.952941z" p-id="1480"></path></svg>China-Henan
+      <div class="left-div skill-carousel">
+        <div class="skill-carousel-container">
+          <div class="skill-item" v-for="(skill, index) in skills" :key="index">
+            <img :src="skill.icon" :alt="skill.name" class="skill-icon">
+            <span class="skill-name">{{ skill.name }}</span>
+          </div>
+          <div class="skill-item" v-for="(skill, index) in skills" :key="'copy-' + index">
+            <img :src="skill.icon" :alt="skill.name" class="skill-icon">
+            <span class="skill-name">{{ skill.name }}</span>
+          </div>
         </div>
-        <div class="left-des-item"><svg t="1705773906032" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2474"><path d="M729.6 234.666667H294.4V157.866667a51.2 51.2 0 0 1 51.2-51.2h332.8a51.2 51.2 0 0 1 51.2 51.2v76.8z m179.2 51.2a51.2 51.2 0 0 1 51.2 51.2v512a51.2 51.2 0 0 1-51.2 51.2H115.2a51.2 51.2 0 0 1-51.2-51.2v-512a51.2 51.2 0 0 1 51.2-51.2h793.557333z m-768 172.032c0 16.384 13.312 29.696 29.696 29.696h683.008a29.696 29.696 0 1 0 0-59.392H170.410667a29.696 29.696 0 0 0-29.696 29.696z m252.416 118.784c0 16.384 13.312 29.696 29.696 29.696h178.176a29.696 29.696 0 1 0 0-59.392H422.912a29.738667 29.738667 0 0 0-29.696 29.696z" p-id="2475"></path></svg>Sias</div>
       </div>
       <div class="left-div left-tag">
         <div class="tag-container" v-for="t in tags" :key="t" @click="handleTagClick(t)">
@@ -503,6 +510,20 @@ export default {
     })
 
     const tags = ref(TEMPL_TAGS)
+    
+    // 技能数据
+    const skills = ref([
+      { name: 'JavaScript', icon: '/skill-icons/JavaScript.svg' },
+      { name: 'HTML', icon: '/skill-icons/HTML.svg' },
+      { name: 'CSS', icon: '/skill-icons/CSS.svg' },
+      { name: 'Git', icon: '/skill-icons/Git.svg' },
+      { name: 'Docker', icon: '/skill-icons/Docker.svg' },
+      { name: 'MongoDB', icon: '/skill-icons/MongoDB.svg' },
+      { name: 'Node.js', icon: '/skill-icons/NodeJS-Dark.svg' },
+      { name: 'Java', icon: '/skill-icons/Java-Dark.svg' },
+      { name: 'Linux', icon: '/skill-icons/Linux-Dark.svg' },
+      { name: 'MySQL', icon: '/skill-icons/MySQL-Dark.svg' },
+    ])
 
     // 访问统计（纯前端，本地浏览次数）
     const visitors = reactive({ today: 0, total: 0 })
@@ -1042,6 +1063,7 @@ export default {
       siteDate,
       exp,
       tags,
+      skills,
       visitors,
       isDarkMode,
       toggleMode,
@@ -1096,6 +1118,48 @@ export default {
 }
 
 /* 标签区域样式 */
+/* 技能轮播样式 */
+.skill-carousel {
+  margin-top: 20px;
+  overflow: hidden;
+  height: 80px;
+  position: relative;
+}
+
+.skill-carousel-container {
+  display: flex;
+  animation: skillCarousel 20s linear infinite;
+}
+
+@keyframes skillCarousel {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.skill-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 15px;
+  min-width: 60px;
+}
+
+.skill-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  margin-bottom: 5px;
+}
+
+.skill-name {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
 .left-div.left-tag {
   background: rgba(0, 0, 0, 0.3);
   border-radius: 5px;
