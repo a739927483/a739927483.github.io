@@ -705,8 +705,8 @@ export default {
           const lyricTop = currentLyric.offsetTop
           const lyricHeight = currentLyric.clientHeight
           
-          // 精确计算滚动位置，使当前歌词位于容器中间偏上位置
-          const scrollTop = lyricTop - containerHeight / 2 + lyricHeight / 2
+          // 调整滚动位置，使当前歌词显示在容器顶部附近
+          const scrollTop = lyricTop - 20
           
           // 使用平滑滚动
           container.scrollTo({
