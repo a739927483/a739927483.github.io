@@ -681,6 +681,20 @@ footer {
         width: 100%;
         padding: 10px;
     }
+    
+    .zww-right header .index-logo {
+        display: none;
+    }
+    
+    .logo {
+        width: 120px;
+        margin-top: 20px;
+    }
+    
+    .tlDate {
+        font-size: 11px;
+        color: rgba(255, 255, 255, 0.7);
+    }
 
     .tanChiShe {
         width: 100%;
