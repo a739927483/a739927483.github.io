@@ -18,7 +18,9 @@
         <div class="left-des-item"><svg t="1705773906032" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2474"><path d="M729.6 234.666667H294.4V157.866667a51.2 51.2 0 0 1 51.2-51.2h332.8a51.2 51.2 0 0 1 51.2 51.2v76.8z m179.2 51.2a51.2 51.2 0 0 1 51.2 51.2v512a51.2 51.2 0 0 1-51.2 51.2H115.2a51.2 51.2 0 0 1-51.2-51.2v-512a51.2 51.2 0 0 1 51.2-51.2h793.557333z m-768 172.032c0 16.384 13.312 29.696 29.696 29.696h683.008a29.696 29.696 0 1 0 0-59.392H170.410667a29.696 29.696 0 0 0-29.696 29.696z m252.416 118.784c0 16.384 13.312 29.696 29.696 29.696h178.176a29.696 29.696 0 1 0 0-59.392H422.912a29.738667 29.738667 0 0 0-29.696 29.696z" p-id="2475"></path></svg>Sias</div>
       </div>
       <div class="left-div left-tag">
-        <div class="left-tag-item" v-for="t in tags" :key="t.name">{{ t.name }}</div>
+        <div class="tag-container" v-for="t in tags" :key="t">
+          {{ t }}
+        </div>
       </div>
       <div class="left-div left-time timeline">
         <div class="sectionTitle">经历</div>
@@ -165,7 +167,7 @@ const TEMPL_TAGS = [
   '摄影',
   '五哈',
   '美食',
-  '治元',
+  '沧元图',
   '音乐',
   '蜡笔小新',
   '英雄联盟手游',
@@ -376,6 +378,32 @@ export default {
   background-attachment: fixed;
   z-index: -99999999;
   transition: background-color 0.2s ease;
+}
+
+/* 标签区域样式 */
+.left-div.left-tag {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 5px;
+  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tag-container {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  padding: 5px;
+  width: fit-content;
+  cursor: pointer;
+  font-size: 12px;
+  color: #fff;
+  transition: all 0.2s ease;
+}
+
+.tag-container:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
 }
 
 /* 经历部分样式 */
