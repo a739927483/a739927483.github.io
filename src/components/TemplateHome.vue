@@ -217,6 +217,9 @@
         <div class="music-info">
           <h3>{{ musicModal.title }}</h3>
           <p>{{ musicModal.author }}</p>
+          <p v-if="musicModal.isPlaying && musicModal.currentLyricIndex >= 0" class="current-lyric-display">
+            {{ musicModal.lyrics[musicModal.currentLyricIndex].text }}
+          </p>
         </div>
         
         <div class="music-controls">
@@ -1350,9 +1353,19 @@ export default {
 }
 
 .music-info p {
-  margin: 0;
-  color: rgba(255, 255, 255, 0.7);
+  margin: 5px 0;
+  color: rgba(255, 255, 255, 0.8);
   font-size: 14px;
+}
+
+.current-lyric-display {
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 10px;
+  opacity: 0.9;
+  text-align: center;
+  min-height: 20px;
 }
 
 .music-controls {
