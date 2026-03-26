@@ -176,23 +176,80 @@
   </div>
 
   <!-- 音乐弹窗 -->
-  <div class="tag-modal" v-if="musicModal.isOpen">
+  <div class="music-modal" v-if="musicModal.isOpen">
     <div class="modal-overlay" @click="closeMusicModal"></div>
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>{{ musicModal.title }}</h3>
-        <button class="close-btn" @click="closeMusicModal">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div class="music-container">
-          <img :src="musicModal.cover" alt="封面" class="music-cover">
-          <div class="music-info">
-            <h4>{{ musicModal.title }}</h4>
-            <p>{{ musicModal.author }}</p>
+    <div class="music-modal-content" @click.stop>
+      <button class="close-btn" @click="closeMusicModal">&times;</button>
+      
+      <div class="music-player">
+        <div class="music-cover-container">
+          <div class="cover-outer">
+            <div class="cover-inner">
+              <img :src="musicModal.cover" :alt="musicModal.title" class="music-cover" :class="{ 'playing': musicModal.isPlaying }">
+              <div v-if="!musicModal.isPlaying" class="play-button-overlay" @click="() => { musicModal.isPlaying = true; $refs.audio.play() }">
+                <span class="play-icon">▶</span>
+              </div>
+              <div v-if="musicModal.isPlaying" class="play-button-overlay" @click="() => { musicModal.isPlaying = false; $refs.audio.pause() }">
+                <span class="pause-icon">❚❚</span>
+              </div>
+            </div>
           </div>
-          <audio controls v-if="musicModal.musicUrl">
-            <source :src="musicModal.musicUrl" type="audio/mpeg">
-          </audio>
+        </div>
+        
+        <div class="music-info">
+          <h3>{{ musicModal.title }}</h3>
+          <p>{{ musicModal.author }}</p>
+        </div>
+        
+        <div class="music-controls">
+          <div class="time-display">
+            <span>{{ formatTime(musicModal.currentTime) }}</span>
+            <span>{{ formatTime(musicModal.duration) }}</span>
+          </div>
+          
+          <div class="progress-bar" @click="handleProgressClick">
+            <div class="progress-fill" :style="{ width: musicModal.duration > 0 ? (musicModal.currentTime / musicModal.duration) * 100 + '%' : '0%' }"></div>
+            <div class="progress-thumb" :style="{ left: musicModal.duration > 0 ? (musicModal.currentTime / musicModal.duration) * 100 + '%' : '0%' }"></div>
+          </div>
+          
+          <div class="control-buttons">
+            <button class="loop-button" @click="musicModal.isLoop = !musicModal.isLoop" :class="{ 'active': musicModal.isLoop }">
+              🔁
+            </button>
+            <button class="lyrics-button" @click="musicModal.showLyrics = !musicModal.showLyrics" :class="{ 'active': musicModal.showLyrics }">
+              词
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <audio ref="audio" :src="musicModal.musicUrl" :loop="musicModal.isLoop" @timeupdate="handleTimeUpdate" @loadedmetadata="handleLoadedMetadata" @ended="musicModal.isPlaying = false"></audio>
+    </div>
+  </div>
+
+  <!-- 视频弹窗 -->
+  <div class="video-modal" v-if="videoModal.isOpen">
+    <div class="modal-overlay" @click="closeVideoModal"></div>
+    <div class="video-modal-content" @click.stop>
+      <button v-if="!videoModal.isFullscreen" class="close-btn" @click="closeVideoModal">&times;</button>
+      
+      <div class="video-player">
+        <video ref="video" :src="videoModal.videoUrl" @click="toggleVideoPlay" @play="videoModal.isPlaying = true" @pause="videoModal.isPlaying = false" controls="false">
+          <source :src="videoModal.videoUrl" type="video/mp4">
+        
+          
+          <div v-if="!videoModal.isPlaying" class="video-play-overlay" @click="toggleVideoPlay">
+            <span class="play-icon">▶</span>
+          </div>
+          
+          <div class="video-controls">
+            <button class="play-pause-btn" @click="toggleVideoPlay">
+              {{ videoModal.isPlaying ? '❚❚' : '▶' }}
+            </button>
+            <button class="fullscreen-btn" @click="toggleFullscreen">
+              ⛶
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -285,6 +342,70 @@ const tagConfigs = {
       danmakuText: '好听',
     },
   },
+  '蜡笔小新': {
+    type: 'video',
+    config: {
+      title: '蜡笔小新',
+      videoUrl: '',
+      danmakuText: '蜡笔小新',
+    },
+  },
+  '沧元图': {
+    type: 'video',
+    config: {
+      title: '沧元图',
+      videoUrl: '',
+      danmakuText: '沧元图',
+    },
+  },
+  '英雄联盟手游': {
+    type: 'video',
+    config: {
+      title: '英雄联盟手游',
+      videoUrl: '',
+      danmakuText: '五杀！我真牛！！',
+    },
+  },
+  '枕刀歌': {
+    type: 'video',
+    config: {
+      title: '枕刀歌',
+      videoUrl: '',
+      danmakuText: '枕刀歌',
+    },
+  },
+  '镖人': {
+    type: 'video',
+    config: {
+      title: '镖人',
+      videoUrl: '',
+      danmakuText: '镖人',
+    },
+  },
+  '不良人': {
+    type: 'video',
+    config: {
+      title: '不良人',
+      videoUrl: '',
+      danmakuText: '有品',
+    },
+  },
+  '不良人天罡传': {
+    type: 'video',
+    config: {
+      title: '不良人天罡传',
+      videoUrl: '',
+      danmakuText: '恭迎大帅',
+    },
+  },
+  '鬼灭之刃': {
+    type: 'video',
+    config: {
+      title: '鬼灭之刃',
+      videoUrl: '',
+      danmakuText: '鬼灭之刃',
+    },
+  },
 }
 
 export default {
@@ -335,6 +456,20 @@ export default {
       cover: '',
       author: '',
       danmakuText: '',
+      isPlaying: false,
+      currentTime: 0,
+      duration: 0,
+      isLoop: false,
+      showLyrics: true,
+    })
+
+    const videoModal = reactive({
+      isOpen: false,
+      title: '',
+      videoUrl: '',
+      danmakuText: '',
+      isPlaying: false,
+      isFullscreen: false,
     })
 
     // 日间/夜间模式切换
@@ -407,7 +542,20 @@ export default {
         case 'music':
           Object.assign(musicModal, {
             isOpen: true,
-            ...tagConfig.config
+            ...tagConfig.config,
+            isPlaying: false,
+            currentTime: 0,
+            duration: 0,
+            isLoop: false,
+            showLyrics: true,
+          })
+          break
+        case 'video':
+          Object.assign(videoModal, {
+            isOpen: true,
+            ...tagConfig.config,
+            isPlaying: false,
+            isFullscreen: false,
           })
           break
         default:
@@ -431,6 +579,73 @@ export default {
     // 关闭音乐弹窗
     const closeMusicModal = () => {
       musicModal.isOpen = false
+      musicModal.isPlaying = false
+      musicModal.currentTime = 0
+    }
+
+    // 关闭视频弹窗
+    const closeVideoModal = () => {
+      videoModal.isOpen = false
+      videoModal.isPlaying = false
+    }
+
+    // 格式化时间
+    const formatTime = (time) => {
+      const minutes = Math.floor(time / 60)
+      const seconds = Math.floor(time % 60)
+      return `${minutes}:${seconds.toString().padStart(2, '0')}`
+    }
+
+    // 音乐时间更新处理
+    const handleTimeUpdate = () => {
+      if ($refs.audio) {
+        musicModal.currentTime = $refs.audio.currentTime
+      }
+    }
+
+    // 音乐加载元数据处理
+    const handleLoadedMetadata = () => {
+      if ($refs.audio) {
+        musicModal.duration = $refs.audio.duration
+      }
+    }
+
+    // 音乐进度条点击处理
+    const handleProgressClick = (e) => {
+      const progressBar = e.currentTarget
+      const rect = progressBar.getBoundingClientRect()
+      const clickX = e.clientX - rect.left
+      const width = rect.width
+      const percentage = clickX / width
+      const time = percentage * musicModal.duration
+      
+      if ($refs.audio) {
+        $refs.audio.currentTime = time
+        musicModal.currentTime = time
+      }
+    }
+
+    // 视频播放切换
+    const toggleVideoPlay = () => {
+      if ($refs.video) {
+        if (videoModal.isPlaying) {
+          $refs.video.pause()
+        } else {
+          $refs.video.play()
+        }
+      }
+    }
+
+    // 视频全屏切换
+    const toggleFullscreen = () => {
+      const container = document.querySelector('.video-modal-content')
+      if (!document.fullscreenElement) {
+        container.requestFullscreen()
+        videoModal.isFullscreen = true
+      } else {
+        document.exitFullscreen()
+        videoModal.isFullscreen = false
+      }
     }
 
     // 图片弹窗功能
@@ -519,9 +734,17 @@ export default {
       toggleMode,
       imageModal,
       musicModal,
+      videoModal,
       handleTagClick,
       closeImageModal,
       closeMusicModal,
+      closeVideoModal,
+      formatTime,
+      handleTimeUpdate,
+      handleLoadedMetadata,
+      handleProgressClick,
+      toggleVideoPlay,
+      toggleFullscreen,
     }
   },
 }
@@ -644,8 +867,8 @@ export default {
   padding-bottom: 80px !important;
 }
 
-/* 标签弹窗样式 */
-.tag-modal {
+/* 音乐弹窗样式 */
+.music-modal {
   position: fixed;
   top: 0;
   left: 0;
@@ -668,34 +891,22 @@ export default {
   -webkit-backdrop-filter: blur(10px);
 }
 
-.modal-content {
+.music-modal-content {
   position: relative;
   background: rgba(0, 0, 0, 0.8);
   border-radius: 15px;
-  padding: 20px;
+  padding: 40px 20px 20px;
   max-width: 500px;
   width: 90%;
-  max-height: 80vh;
-  overflow-y: auto;
   color: #fff;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.modal-header h3 {
-  margin: 0;
-  font-size: 20px;
+  animation: modalSlideIn 0.3s ease-out;
 }
 
 .close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
   background: none;
   border: none;
   color: #fff;
@@ -709,60 +920,267 @@ export default {
   justify-content: center;
   border-radius: 50%;
   transition: background-color 0.2s ease;
+  z-index: 10;
 }
 
 .close-btn:hover {
   background: rgba(255, 255, 255, 0.1);
 }
 
-.modal-body {
+.music-player {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.image-container {
-  margin-top: 20px;
-  max-width: 100%;
+.music-cover-container {
+  margin-bottom: 20px;
 }
 
-.image-container img {
-  max-width: 100%;
-  max-height: 400px;
-  border-radius: 8px;
-}
-
-.music-container {
+.cover-outer {
+  width: 300px;
+  height: 300px;
+  background: #3F4142;
+  border-radius: 50%;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 20px;
+  justify-content: center;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.cover-inner {
+  width: 270px;
+  height: 270px;
+  background: #030303;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
 }
 
 .music-cover {
-  width: 150px;
-  height: 150px;
+  width: 200px;
+  height: 200px;
   border-radius: 50%;
   object-fit: cover;
+  border: 3px solid #fff;
+  transition: transform 1s linear;
+}
+
+.music-cover.playing {
+  animation: spin 10s linear infinite;
+}
+
+.play-button-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.play-icon, .pause-icon {
+  color: #fff;
+  font-size: 24px;
 }
 
 .music-info {
   text-align: center;
+  margin-bottom: 20px;
 }
 
-.music-info h4 {
+.music-info h3 {
   margin: 0 0 5px 0;
-  font-size: 18px;
+  font-size: 24px;
 }
 
 .music-info p {
   margin: 0;
   color: rgba(255, 255, 255, 0.7);
+  font-size: 14px;
 }
 
-audio {
+.music-controls {
   width: 100%;
-  margin-top: 10px;
+}
+
+.time-display {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  position: relative;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #fff;
+  border-radius: 4px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: width 0.1s ease;
+}
+
+.progress-thumb {
+  width: 16px;
+  height: 16px;
+  background: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.control-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.loop-button, .lyrics-button {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.loop-button.active, .lyrics-button.active {
+  color: #fff;
+  font-weight: bold;
+}
+
+.loop-button:hover, .lyrics-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* 视频弹窗样式 */
+.video-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 100000;
+}
+
+.video-modal-content {
+  position: relative;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 15px;
+  overflow: hidden;
+  max-width: 90%;
+  max-height: 90vh;
+  width: auto;
+  height: auto;
+  animation: modalSlideIn 0.3s ease-out;
+}
+
+.video-player {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+video {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.video-play-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.video-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.video-player:hover .video-controls {
+  opacity: 1;
+}
+
+.play-pause-btn, .fullscreen-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+}
+
+.play-pause-btn:hover, .fullscreen-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* 动画效果 */
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
 
