@@ -695,18 +695,24 @@ export default {
     const scrollToCurrentLyric = () => {
       if (lyricsContentRef.value && musicModal.currentLyricIndex >= 0) {
         const container = lyricsContentRef.value
-        const currentLyric = container.querySelector('.current')
+        
+        // 直接获取所有歌词元素
+        const lyricElements = container.querySelectorAll('.lyrics-content div')
+        const currentLyric = lyricElements[musicModal.currentLyricIndex]
         
         if (currentLyric) {
           const containerHeight = container.clientHeight
           const lyricTop = currentLyric.offsetTop
           const lyricHeight = currentLyric.clientHeight
           
-          // 计算滚动位置，使当前歌词居中，调整为偏上显示
-          const scrollTop = lyricTop - containerHeight / 3
+          // 精确计算滚动位置，使当前歌词位于容器中间偏上位置
+          const scrollTop = lyricTop - containerHeight / 2 + lyricHeight / 2
           
-          // 立即滚动
-          container.scrollTop = Math.max(0, scrollTop)
+          // 使用平滑滚动
+          container.scrollTo({
+            top: Math.max(0, scrollTop),
+            behavior: 'smooth'
+          })
         }
       }
     }
@@ -735,10 +741,11 @@ export default {
     const updateLyricIndex = (currentTime) => {
       if (musicModal.lyrics.length === 0) return
       
-      let newIndex = musicModal.currentLyricIndex
+      let newIndex = 0
       
+      // 精确查找当前时间对应的歌词索引
       for (let i = 0; i < musicModal.lyrics.length; i++) {
-        if (musicModal.lyrics[i].time > currentTime) {
+        if (currentTime < musicModal.lyrics[i].time) {
           newIndex = Math.max(0, i - 1)
           break
         } else if (i === musicModal.lyrics.length - 1) {
@@ -746,14 +753,13 @@ export default {
         }
       }
       
-      if (newIndex !== musicModal.currentLyricIndex) {
-        musicModal.currentLyricIndex = newIndex
-        
-        // 使用nextTick确保DOM更新后再滚动
-        nextTick(() => {
-          scrollToCurrentLyric()
-        })
-      }
+      // 每次时间更新都滚动，确保精准定位
+      musicModal.currentLyricIndex = newIndex
+      
+      // 立即滚动，不等待DOM更新
+      setTimeout(() => {
+        scrollToCurrentLyric()
+      }, 0)
     }
 
     // 音乐进度条点击处理
