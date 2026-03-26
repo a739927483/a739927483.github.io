@@ -743,23 +743,21 @@ export default {
       
       let newIndex = 0
       
-      // 精确查找当前时间对应的歌词索引
-      for (let i = 0; i < musicModal.lyrics.length; i++) {
-        if (currentTime < musicModal.lyrics[i].time) {
-          newIndex = Math.max(0, i - 1)
-          break
-        } else if (i === musicModal.lyrics.length - 1) {
+      // 反向查找，从最后一个开始，找到第一个时间小于等于当前时间的歌词
+      for (let i = musicModal.lyrics.length - 1; i >= 0; i--) {
+        if (musicModal.lyrics[i].time <= currentTime) {
           newIndex = i
+          break
         }
       }
       
-      // 每次时间更新都滚动，确保精准定位
+      // 更新索引并滚动
       musicModal.currentLyricIndex = newIndex
       
-      // 立即滚动，不等待DOM更新
-      setTimeout(() => {
+      // 使用nextTick确保DOM更新后再滚动
+      nextTick(() => {
         scrollToCurrentLyric()
-      }, 0)
+      })
     }
 
     // 音乐进度条点击处理
