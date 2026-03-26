@@ -204,10 +204,10 @@
           <div class="cover-outer">
             <div class="cover-inner">
               <img :src="musicModal.cover" :alt="musicModal.title" class="music-cover" :class="{ 'playing': musicModal.isPlaying }">
-              <div v-if="!musicModal.isPlaying" class="play-button-overlay" @click="() => { musicModal.isPlaying = true; audioRef.value.play() }">
+              <div v-if="!musicModal.isPlaying" class="play-button-overlay" @click.stop="toggleMusicPlay">
                 <span class="play-icon">▶</span>
               </div>
-              <div v-if="musicModal.isPlaying" class="play-button-overlay" @click="() => { musicModal.isPlaying = false; audioRef.value.pause() }">
+              <div v-if="musicModal.isPlaying" class="play-button-overlay" @click.stop="toggleMusicPlay">
                 <span class="pause-icon">❚❚</span>
               </div>
             </div>
@@ -230,18 +230,43 @@
             <div class="progress-thumb" :style="{ left: musicModal.duration > 0 ? (musicModal.currentTime / musicModal.duration) * 100 + '%' : '0%' }"></div>
           </div>
           
-          <div class="control-buttons">
-            <button class="loop-button" @click="musicModal.isLoop = !musicModal.isLoop" :class="{ 'active': musicModal.isLoop }">
-              🔁
+          <div class="control-buttons" style="display: flex; align-items: center; gap: 15px;">
+            <button class="control-button" @click="musicModal.isLoop = !musicModal.isLoop" :class="{ 'active': musicModal.isLoop }" title="循环">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/>
+              </svg>
             </button>
-            <button class="lyrics-button" @click="musicModal.showLyrics = !musicModal.showLyrics" :class="{ 'active': musicModal.showLyrics }">
-              词
+            <button class="control-button" @click="musicModal.showLyrics = !musicModal.showLyrics" :class="{ 'active': musicModal.showLyrics }" title="歌词">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M4 18h16V6H4v12zM6 8h8v2H6V8zm0 4h8v2H6v-2z"/>
+              </svg>
             </button>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <button class="control-button" @click="toggleMute" title="静音">
+                <svg v-if="!musicModal.isMuted" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+                </svg>
+                <svg v-else width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+                </svg>
+              </button>
+              <input type="range" min="0" max="1" step="0.1" v-model="musicModal.volume" @input="updateVolume" style="width: 80px; height: 4px;">
+            </div>
+          </div>
+        </div>
+        
+        <!-- 歌词显示区域 -->
+        <div class="lyrics-container" v-if="musicModal.showLyrics">
+          <div class="lyrics-content" ref="lyricsContentRef">
+            <div v-for="(line, index) in musicModal.lyrics" :key="index" 
+                 :class="{ 'current': index === musicModal.currentLyricIndex }">
+              {{ line.text }}
+            </div>
           </div>
         </div>
       </div>
       
-      <audio ref="audioRef" :src="musicModal.musicUrl" :loop="musicModal.isLoop" @timeupdate="handleTimeUpdate" @loadedmetadata="handleLoadedMetadata" @ended="musicModal.isPlaying = false"></audio>
+      <audio ref="audioRef" :src="musicModal.musicUrl" :loop="musicModal.isLoop" @timeupdate="handleTimeUpdate" @loadedmetadata="handleLoadedMetadata" @ended="musicModal.isPlaying = false" @error="handleAudioError"></audio>
     </div>
   </div>
 
@@ -301,7 +326,7 @@
 </template>
 
 <script>
-import { computed, onBeforeUnmount, onMounted, reactive, ref } from 'vue'
+import { computed, onBeforeUnmount, onMounted, reactive, ref, nextTick } from 'vue'
 
 const TEMPL_TAGS = [
   '做饭',
@@ -350,40 +375,44 @@ const tagConfigs = {
     type: 'music',
     config: {
       title: 'wuha',
-      musicUrl: '',
+      musicUrl: '/music/test.mp3',
       cover: '/images/wuha.jpg',
       author: '邓超&陈赫&鹿晗&范志毅&宝石Gem&王勉',
       danmakuText: '好听',
+      lrcUrl: '/ci/test.lrc',
     },
   },
   '天空中的歌': {
     type: 'music',
     config: {
       title: '天空中的歌',
-      musicUrl: '',
+      musicUrl: '/music/test.mp3',
       cover: '/images/tkzdg.jpg',
       author: '崔一乔',
       danmakuText: '好听',
+      lrcUrl: '/ci/test.lrc',
     },
   },
   '鲜花': {
     type: 'music',
     config: {
       title: '鲜花',
-      musicUrl: '',
+      musicUrl: '/music/test.mp3',
       cover: '/images/xh.jpg',
       author: '回春丹乐队',
       danmakuText: '好听',
+      lrcUrl: '/ci/test.lrc',
     },
   },
   '音乐': {
     type: 'music',
     config: {
       title: '音乐播放器',
-      musicUrl: '/music/sample.mp3',
+      musicUrl: '/music/test.mp3',
       cover: '/images/avatar.png',
       author: '未知艺术家',
       danmakuText: '好听',
+      lrcUrl: '/ci/test.lrc',
     },
   },
   '蜡笔小新': {
@@ -505,6 +534,10 @@ export default {
       duration: 0,
       isLoop: false,
       showLyrics: true,
+      lyrics: [],
+      currentLyricIndex: 0,
+      volume: 0.8,
+      isMuted: false,
     })
 
     const videoModal = reactive({
@@ -589,6 +622,8 @@ export default {
           })
           break
         case 'music':
+          console.log('点击音乐标签:', tagName)
+          console.log('音乐配置:', tagConfig.config)
           Object.assign(musicModal, {
             isOpen: true,
             ...tagConfig.config,
@@ -597,8 +632,12 @@ export default {
             duration: 0,
             isLoop: false,
             showLyrics: true,
+            lyrics: [],
+            currentLyricIndex: 0,
           })
           startDanmakus('music', tagConfig.config.danmakuText)
+          // 加载歌词
+          loadLyrics(tagConfig.config.lrcUrl)
           break
         case 'video':
           Object.assign(videoModal, {
@@ -649,10 +688,33 @@ export default {
       return `${minutes}:${seconds.toString().padStart(2, '0')}`
     }
 
+    // 滚动到当前歌词
+    const scrollToCurrentLyric = () => {
+      if (lyricsContentRef.value && musicModal.currentLyricIndex >= 0) {
+        const container = lyricsContentRef.value
+        const currentLyric = container.querySelector('.current')
+        
+        if (currentLyric) {
+          const containerHeight = container.clientHeight
+          const lyricTop = currentLyric.offsetTop
+          const lyricHeight = currentLyric.clientHeight
+          
+          // 计算滚动位置，使当前歌词居中
+          const scrollTop = lyricTop - containerHeight / 2 + lyricHeight / 2
+          
+          // 立即滚动
+          container.scrollTop = Math.max(0, scrollTop)
+        }
+      }
+    }
+
     // 音乐时间更新处理
     const handleTimeUpdate = () => {
       if (audioRef.value) {
         musicModal.currentTime = audioRef.value.currentTime
+        
+        // 使用共享的歌词索引更新函数
+        updateLyricIndex(musicModal.currentTime)
       }
     }
 
@@ -660,6 +722,34 @@ export default {
     const handleLoadedMetadata = () => {
       if (audioRef.value) {
         musicModal.duration = audioRef.value.duration
+        // 设置初始音量
+        audioRef.value.volume = musicModal.volume
+        audioRef.value.muted = musicModal.isMuted
+      }
+    }
+
+    // 更新歌词索引
+    const updateLyricIndex = (currentTime) => {
+      if (musicModal.lyrics.length === 0) return
+      
+      let newIndex = musicModal.currentLyricIndex
+      
+      for (let i = 0; i < musicModal.lyrics.length; i++) {
+        if (musicModal.lyrics[i].time > currentTime) {
+          newIndex = Math.max(0, i - 1)
+          break
+        } else if (i === musicModal.lyrics.length - 1) {
+          newIndex = i
+        }
+      }
+      
+      if (newIndex !== musicModal.currentLyricIndex) {
+        musicModal.currentLyricIndex = newIndex
+        
+        // 使用nextTick确保DOM更新后再滚动
+        nextTick(() => {
+          scrollToCurrentLyric()
+        })
       }
     }
 
@@ -675,6 +765,102 @@ export default {
       if (audioRef.value) {
         audioRef.value.currentTime = time
         musicModal.currentTime = time
+        
+        // 立即更新歌词索引和滚动
+        updateLyricIndex(time)
+      }
+    }
+
+    // 音频错误处理
+    const handleAudioError = (event) => {
+      console.error('音频加载失败:', event.target.error)
+    }
+
+    // 切换静音
+    const toggleMute = () => {
+      if (audioRef.value) {
+        audioRef.value.muted = !audioRef.value.muted
+        musicModal.isMuted = audioRef.value.muted
+      }
+    }
+
+    // 更新音量
+    const updateVolume = () => {
+      if (audioRef.value) {
+        audioRef.value.volume = musicModal.volume
+        musicModal.isMuted = musicModal.volume === 0
+      }
+    }
+
+    // 切换音乐播放/暂停
+    const toggleMusicPlay = () => {
+      if (!audioRef.value) return
+      
+      if (!musicModal.isPlaying) {
+        // 播放
+        audioRef.value.load()
+        audioRef.value.volume = 1.0
+        audioRef.value.muted = false
+        audioRef.value.play().catch(err => {
+          console.error('播放失败:', err)
+          musicModal.isPlaying = false
+        })
+        musicModal.isPlaying = true
+      } else {
+        // 暂停
+        audioRef.value.pause()
+        musicModal.isPlaying = false
+      }
+    }
+
+
+
+    // 解析LRC歌词
+    const parseLrc = (lrcContent) => {
+      const lyrics = []
+      const lines = lrcContent.split('\n')
+      const lrcRegex = /\[(\d{2}):(\d{2})\.(\d{3})\](.*)/
+      
+      lines.forEach(line => {
+        const match = line.match(lrcRegex)
+        if (match) {
+          const minutes = parseInt(match[1])
+          const seconds = parseInt(match[2])
+          const milliseconds = parseInt(match[3])
+          const text = match[4].trim()
+          
+          if (text) {
+            lyrics.push({
+              time: minutes * 60 + seconds + milliseconds / 1000,
+              text: text
+            })
+          }
+        }
+      })
+      
+      return lyrics.sort((a, b) => a.time - b.time)
+    }
+
+    // 加载歌词
+    const loadLyrics = async (lrcUrl) => {
+      if (!lrcUrl) {
+        musicModal.lyrics = []
+        musicModal.currentLyricIndex = 0
+        return
+      }
+      
+      try {
+        const response = await fetch(lrcUrl)
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+        const lrcContent = await response.text()
+        musicModal.lyrics = parseLrc(lrcContent)
+        musicModal.currentLyricIndex = 0
+      } catch (error) {
+        console.error('加载歌词失败:', error)
+        musicModal.lyrics = []
+        musicModal.currentLyricIndex = 0
       }
     }
 
@@ -704,6 +890,7 @@ export default {
     // 音频和视频引用
     const audioRef = ref(null)
     const videoRef = ref(null)
+    const lyricsContentRef = ref(null)
 
     // 创建弹幕
     const createDanmaku = (text) => {
@@ -870,6 +1057,7 @@ export default {
       videoDanmakus,
       audioRef,
       videoRef,
+      lyricsContentRef,
       handleTagClick,
       closeImageModal,
       closeMusicModal,
@@ -878,6 +1066,14 @@ export default {
       handleTimeUpdate,
       handleLoadedMetadata,
       handleProgressClick,
+      handleAudioError,
+      toggleMute,
+      updateVolume,
+      toggleMusicPlay,
+      scrollToCurrentLyric,
+      updateLyricIndex,
+      parseLrc,
+      loadLyrics,
       toggleVideoPlay,
       toggleFullscreen,
       startDanmakus,
@@ -1216,6 +1412,28 @@ export default {
   background: rgba(255, 255, 255, 0.1);
 }
 
+.control-button {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.control-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.control-button.active {
+  color: #fff;
+}
+
 /* 视频弹窗样式 */
 .video-modal {
   position: fixed;
@@ -1330,16 +1548,17 @@ video {
   height: 50%;
   pointer-events: none;
   overflow: hidden;
-  z-index: 45;
+  z-index: 10;
 }
 
 .danmaku {
   position: absolute;
   white-space: nowrap;
   font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
   transform: translateZ(0);
   will-change: transform;
+  opacity: 0.8;
 }
 
 /* 视频播放器改进 */
@@ -1423,6 +1642,35 @@ video {
 .play-pause-btn:hover, .fullscreen-btn:hover {
   background: rgba(0, 0, 0, 0.8);
   transform: scale(1.1);
+}
+
+/* 歌词显示样式 */
+.lyrics-container {
+  margin-top: 20px;
+  height: 150px;
+  overflow-y: auto;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.lyrics-content {
+  text-align: center;
+  font-size: 14px;
+  line-height: 2;
+}
+
+.lyrics-content div {
+  padding: 4px 0;
+  opacity: 0.6;
+  transition: all 0.3s ease;
+}
+
+.lyrics-content .current {
+  opacity: 1;
+  font-weight: bold;
+  color: #fff;
+  font-size: 16px;
 }
 </style>
 
