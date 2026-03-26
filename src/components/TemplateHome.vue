@@ -217,9 +217,6 @@
         <div class="music-info">
           <h3>{{ musicModal.title }}</h3>
           <p>{{ musicModal.author }}</p>
-          <p v-if="musicModal.isPlaying && musicModal.currentLyricIndex >= 0" class="current-lyric-display">
-            {{ musicModal.lyrics[musicModal.currentLyricIndex].text }}
-          </p>
         </div>
         
         <div class="music-controls">
@@ -234,12 +231,12 @@
           </div>
           
           <div class="control-buttons" style="display: flex; align-items: center; gap: 15px;">
-            <button class="control-button" @click="toggleLoop" :class="{ 'active': musicModal.isLoop }" title="循环">
+            <button class="control-button" @click="musicModal.isLoop = !musicModal.isLoop" :class="{ 'active': musicModal.isLoop }" title="循环">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/>
               </svg>
             </button>
-            <button class="control-button" @click="toggleLyrics" :class="{ 'active': musicModal.showLyrics }" title="歌词">
+            <button class="control-button" @click="musicModal.showLyrics = !musicModal.showLyrics" :class="{ 'active': musicModal.showLyrics }" title="歌词">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M4 18h16V6H4v12zM6 8h8v2H6V8zm0 4h8v2H6v-2z"/>
               </svg>
@@ -259,8 +256,8 @@
         </div>
         
         <!-- 歌词显示区域 -->
-        <div class="lyrics-container" v-if="musicModal.showLyrics" ref="lyricsContentRef">
-          <div class="lyrics-content">
+        <div class="lyrics-container" v-if="musicModal.showLyrics">
+          <div class="lyrics-content" ref="lyricsContentRef">
             <div v-for="(line, index) in musicModal.lyrics" :key="index" 
                  :class="{ 'current': index === musicModal.currentLyricIndex }">
               {{ line.text }}
@@ -695,24 +692,18 @@ export default {
     const scrollToCurrentLyric = () => {
       if (lyricsContentRef.value && musicModal.currentLyricIndex >= 0) {
         const container = lyricsContentRef.value
-        
-        // 直接获取所有歌词元素
-        const lyricElements = container.querySelectorAll('.lyrics-content div')
-        const currentLyric = lyricElements[musicModal.currentLyricIndex]
+        const currentLyric = container.querySelector('.current')
         
         if (currentLyric) {
           const containerHeight = container.clientHeight
           const lyricTop = currentLyric.offsetTop
           const lyricHeight = currentLyric.clientHeight
           
-          // 调整滚动位置，使当前歌词显示在容器最顶部
-          const scrollTop = lyricTop
+          // 计算滚动位置，使当前歌词显示在圆圈的最下方
+          const scrollTop = lyricTop - 40
           
-          // 使用平滑滚动
-          container.scrollTo({
-            top: Math.max(0, scrollTop),
-            behavior: 'smooth'
-          })
+          // 立即滚动
+          container.scrollTop = Math.max(0, scrollTop)
         }
       }
     }
@@ -741,9 +732,8 @@ export default {
     const updateLyricIndex = (currentTime) => {
       if (musicModal.lyrics.length === 0) return
       
-      let newIndex = 0
+      let newIndex = musicModal.currentLyricIndex
       
-      // 从前往后查找，找到第一个时间大于当前时间的歌词
       for (let i = 0; i < musicModal.lyrics.length; i++) {
         if (musicModal.lyrics[i].time > currentTime) {
           newIndex = Math.max(0, i - 1)
@@ -753,13 +743,14 @@ export default {
         }
       }
       
-      // 强制更新索引并滚动，确保时间同步
-      musicModal.currentLyricIndex = newIndex
-      
-      // 使用nextTick确保DOM更新后再滚动
-      nextTick(() => {
-        scrollToCurrentLyric()
-      })
+      if (newIndex !== musicModal.currentLyricIndex) {
+        musicModal.currentLyricIndex = newIndex
+        
+        // 使用nextTick确保DOM更新后再滚动
+        nextTick(() => {
+          scrollToCurrentLyric()
+        })
+      }
     }
 
     // 音乐进度条点击处理
@@ -799,16 +790,6 @@ export default {
         audioRef.value.volume = musicModal.volume
         musicModal.isMuted = musicModal.volume === 0
       }
-    }
-
-    // 切换循环模式
-    const toggleLoop = () => {
-      musicModal.isLoop = !musicModal.isLoop
-    }
-
-    // 切换歌词显示
-    const toggleLyrics = () => {
-      musicModal.showLyrics = !musicModal.showLyrics
     }
 
     // 切换音乐播放/暂停
@@ -1088,8 +1069,6 @@ export default {
       handleAudioError,
       toggleMute,
       updateVolume,
-      toggleLoop,
-      toggleLyrics,
       toggleMusicPlay,
       scrollToCurrentLyric,
       updateLyricIndex,
@@ -1359,19 +1338,9 @@ export default {
 }
 
 .music-info p {
-  margin: 5px 0;
-  color: rgba(255, 255, 255, 0.8);
+  margin: 0;
+  color: rgba(255, 255, 255, 0.7);
   font-size: 14px;
-}
-
-.current-lyric-display {
-  color: #fff;
-  font-size: 16px;
-  font-weight: bold;
-  margin-top: 10px;
-  opacity: 0.9;
-  text-align: center;
-  min-height: 20px;
 }
 
 .music-controls {
