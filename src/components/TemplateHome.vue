@@ -6,7 +6,8 @@
   <div class="zww-background" id="zww-background"></div>
 
   <div class="zww-main">
-    <div class="zww-info">
+    <div>
+      <div class="zww-info">
       <div class="zww-left">
         <div class="logo" style="background-image: url(/images/logo.png)">
           <img
@@ -276,6 +277,8 @@
         </content>
       </div>
     </div>
+    </div>
+    
   </div>
   <footer class="fixed-footer">
     <div class="footer-content">
