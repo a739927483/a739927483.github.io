@@ -231,12 +231,12 @@
           </div>
           
           <div class="control-buttons" style="display: flex; align-items: center; gap: 15px;">
-            <button class="control-button" @click="musicModal.isLoop = !musicModal.isLoop" :class="{ 'active': musicModal.isLoop }" title="循环">
+            <button class="control-button" @click="toggleLoop" :class="{ 'active': musicModal.isLoop }" title="循环">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z"/>
               </svg>
             </button>
-            <button class="control-button" @click="musicModal.showLyrics = !musicModal.showLyrics" :class="{ 'active': musicModal.showLyrics }" title="歌词">
+            <button class="control-button" @click="toggleLyrics" :class="{ 'active': musicModal.showLyrics }" title="歌词">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M4 18h16V6H4v12zM6 8h8v2H6V8zm0 4h8v2H6v-2z"/>
               </svg>
@@ -792,6 +792,16 @@ export default {
       }
     }
 
+    // 切换循环模式
+    const toggleLoop = () => {
+      musicModal.isLoop = !musicModal.isLoop
+    }
+
+    // 切换歌词显示
+    const toggleLyrics = () => {
+      musicModal.showLyrics = !musicModal.showLyrics
+    }
+
     // 切换音乐播放/暂停
     const toggleMusicPlay = () => {
       if (!audioRef.value) return
@@ -1069,6 +1079,8 @@ export default {
       handleAudioError,
       toggleMute,
       updateVolume,
+      toggleLoop,
+      toggleLyrics,
       toggleMusicPlay,
       scrollToCurrentLyric,
       updateLyricIndex,
