@@ -86,7 +86,7 @@
         </div>
 
         <div class="tanChiShe">
-          <img id="tanChiShe" src="/svg/snake-Light.svg" alt="">
+          <img id="tanChiShe" src="/svg/snake-Dark.svg" alt="">
         </div>
       </header>
 
@@ -225,7 +225,7 @@ export default {
       if (isDarkMode.value) {
         html.setAttribute('data-theme', 'Dark')
         if (snakeImg) {
-          snakeImg.src = '/svg/snake-Dark.svg'
+          snakeImg.src = '/svg/snake-Light.svg'
         }
         if (background) {
           background.style.backgroundImage = 'url(/images/night-background.jpg)'
@@ -233,7 +233,7 @@ export default {
       } else {
         html.removeAttribute('data-theme')
         if (snakeImg) {
-          snakeImg.src = '/svg/snake-Light.svg'
+          snakeImg.src = '/svg/snake-Dark.svg'
         }
         if (background) {
           background.style.backgroundImage = 'url(/images/day-background.jpg)'
@@ -250,7 +250,7 @@ export default {
       if (isDarkMode.value) {
         html.setAttribute('data-theme', 'Dark')
         if (snakeImg) {
-          snakeImg.src = '/svg/snake-Dark.svg'
+          snakeImg.src = '/svg/snake-Light.svg'
         }
         if (background) {
           background.style.backgroundImage = 'url(/images/night-background.jpg)'
@@ -258,7 +258,7 @@ export default {
       } else {
         html.removeAttribute('data-theme')
         if (snakeImg) {
-          snakeImg.src = '/svg/snake-Light.svg'
+          snakeImg.src = '/svg/snake-Dark.svg'
         }
         if (background) {
           background.style.backgroundImage = 'url(/images/day-background.jpg)'
