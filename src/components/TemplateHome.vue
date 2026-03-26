@@ -175,6 +175,24 @@
     </div>
   </div>
 
+  <!-- 音乐弹幕 -->
+  <div class="danmaku-container" v-if="musicModal.isOpen">
+    <div 
+      v-for="danmaku in musicDanmakus" 
+      :key="danmaku.id"
+      class="danmaku"
+      :style="{
+        top: danmaku.top + 'px',
+        left: danmaku.left + 'px',
+        opacity: danmaku.opacity,
+        fontSize: danmaku.fontSize + 'px',
+        color: danmaku.color,
+      }"
+    >
+      {{ danmaku.text }}
+    </div>
+  </div>
+
   <!-- 音乐弹窗 -->
   <div class="music-modal" v-if="musicModal.isOpen">
     <div class="modal-overlay" @click="closeMusicModal"></div>
@@ -227,6 +245,24 @@
     </div>
   </div>
 
+  <!-- 视频弹幕 -->
+  <div class="danmaku-container" v-if="videoModal.isOpen">
+    <div 
+      v-for="danmaku in videoDanmakus" 
+      :key="danmaku.id"
+      class="danmaku"
+      :style="{
+        top: danmaku.top + 'px',
+        left: danmaku.left + 'px',
+        opacity: danmaku.opacity,
+        fontSize: danmaku.fontSize + 'px',
+        color: danmaku.color,
+      }"
+    >
+      {{ danmaku.text }}
+    </div>
+  </div>
+
   <!-- 视频弹窗 -->
   <div class="video-modal" v-if="videoModal.isOpen">
     <div class="modal-overlay" @click="closeVideoModal"></div>
@@ -238,17 +274,26 @@
           <source :src="videoModal.videoUrl" type="video/mp4">
         
           
+          <!-- 播放按钮覆盖层 -->
           <div v-if="!videoModal.isPlaying" class="video-play-overlay" @click="toggleVideoPlay">
-            <span class="play-icon">▶</span>
+            <div class="play-icon-circle">
+              <span class="play-icon">▶</span>
+            </div>
           </div>
           
+          <!-- 自定义控制栏 -->
           <div class="video-controls">
-            <button class="play-pause-btn" @click="toggleVideoPlay">
-              {{ videoModal.isPlaying ? '❚❚' : '▶' }}
-            </button>
-            <button class="fullscreen-btn" @click="toggleFullscreen">
-              ⛶
-            </button>
+            <div class="controls-left">
+              <button class="play-pause-btn" @click="toggleVideoPlay">
+                {{ videoModal.isPlaying ? '❚❚' : '▶' }}
+              </button>
+            </div>
+            
+            <div class="controls-right">
+              <button class="fullscreen-btn" @click="toggleFullscreen">
+                ⛶
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -472,6 +517,11 @@ export default {
       isFullscreen: false,
     })
 
+    // 弹幕状态
+    const musicDanmakus = ref([])
+    const videoDanmakus = ref([])
+    const danmakuIntervals = ref({})
+
     // 日间/夜间模式切换
     const isDarkMode = ref(false)
 
@@ -549,6 +599,7 @@ export default {
             isLoop: false,
             showLyrics: true,
           })
+          startDanmakus('music', tagConfig.config.danmakuText)
           break
         case 'video':
           Object.assign(videoModal, {
@@ -557,6 +608,7 @@ export default {
             isPlaying: false,
             isFullscreen: false,
           })
+          startDanmakus('video', tagConfig.config.danmakuText)
           break
         default:
           break
@@ -581,12 +633,14 @@ export default {
       musicModal.isOpen = false
       musicModal.isPlaying = false
       musicModal.currentTime = 0
+      stopDanmakus('music')
     }
 
     // 关闭视频弹窗
     const closeVideoModal = () => {
       videoModal.isOpen = false
       videoModal.isPlaying = false
+      stopDanmakus('video')
     }
 
     // 格式化时间
@@ -646,6 +700,80 @@ export default {
         document.exitFullscreen()
         videoModal.isFullscreen = false
       }
+    }
+
+    // 创建弹幕
+    const createDanmaku = (text) => {
+      const containerHeight = window.innerHeight * 0.5
+      const lineHeight = 24
+      const maxTop = Math.max(0, containerHeight - lineHeight)
+
+      return {
+        id: Math.random().toString(36).substr(2, 9),
+        text: text,
+        top: Math.random() * maxTop,
+        left: window.innerWidth,
+        speed: 3 + Math.random() * 2,
+        opacity: 0.7 + Math.random() * 0.3,
+        fontSize: 16 + Math.random() * 8,
+        color: '#ffffff',
+      }
+    }
+
+    // 更新弹幕位置
+    const updateDanmakus = (danmakus) => {
+      danmakus.value = danmakus.value
+        .map(danmaku => ({
+          ...danmaku,
+          left: danmaku.left - danmaku.speed
+        }))
+        .filter(danmaku => danmaku.left > -300)
+    }
+
+    // 启动弹幕
+    const startDanmakus = (type, text) => {
+      // 清理之前的定时器
+      if (danmakuIntervals.value[type]) {
+        clearInterval(danmakuIntervals.value[type])
+      }
+
+      const danmakus = type === 'music' ? musicDanmakus : videoDanmakus
+      
+      // 清空弹幕
+      danmakus.value = []
+
+      // 添加初始弹幕
+      for (let i = 0; i < 5; i++) {
+        danmakus.value.push(createDanmaku(text))
+      }
+
+      // 设置定时器添加新弹幕
+      danmakuIntervals.value[type] = setInterval(() => {
+        danmakus.value.push(createDanmaku(text))
+        // 限制弹幕数量
+        if (danmakus.value.length > 50) {
+          danmakus.value = danmakus.value.slice(-50)
+        }
+      }, 800)
+
+      // 设置动画帧更新弹幕位置
+      const update = () => {
+        updateDanmakus(danmakus)
+        if (danmakuIntervals.value[type]) {
+          requestAnimationFrame(update)
+        }
+      }
+      requestAnimationFrame(update)
+    }
+
+    // 停止弹幕
+    const stopDanmakus = (type) => {
+      if (danmakuIntervals.value[type]) {
+        clearInterval(danmakuIntervals.value[type])
+        delete danmakuIntervals.value[type]
+      }
+      const danmakus = type === 'music' ? musicDanmakus : videoDanmakus
+      danmakus.value = []
     }
 
     // 图片弹窗功能
@@ -735,6 +863,8 @@ export default {
       imageModal,
       musicModal,
       videoModal,
+      musicDanmakus,
+      videoDanmakus,
       handleTagClick,
       closeImageModal,
       closeMusicModal,
@@ -745,6 +875,8 @@ export default {
       handleProgressClick,
       toggleVideoPlay,
       toggleFullscreen,
+      startDanmakus,
+      stopDanmakus,
     }
   },
 }
@@ -1181,6 +1313,102 @@ video {
   to {
     transform: rotate(360deg);
   }
+}
+
+/* 弹幕样式 */
+.danmaku-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 50%;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 45;
+}
+
+.danmaku {
+  position: absolute;
+  white-space: nowrap;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* 视频播放器改进 */
+.video-play-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+}
+
+.play-icon-circle {
+  width: 80px;
+  height: 80px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.play-icon-circle:hover {
+  background: rgba(0, 0, 0, 0.7);
+  transform: scale(1.1);
+}
+
+.video-controls {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.video-player:hover .video-controls {
+  opacity: 1;
+}
+
+.controls-left, .controls-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.play-pause-btn, .fullscreen-btn {
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 12px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.play-pause-btn:hover, .fullscreen-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+  transform: scale(1.1);
 }
 </style>
 
