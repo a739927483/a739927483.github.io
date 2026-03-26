@@ -307,9 +307,8 @@ body {
 .zww-right {
     width: calc(100% - 230px);
     display: flex;
-    padding: 5px 20px;
+    padding: 5px 20px 10px;
     position: relative;
-    padding-bottom: 50px;
     flex-direction: column;
 }
 .welcome {
