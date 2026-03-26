@@ -550,7 +550,7 @@ export default {
       }
       
       carouselInterval = setInterval(() => {
-        currentPosition += 2
+        currentPosition += 3
         
         // 当滚动到末尾时，重置位置
         if (currentPosition >= containerWidth - carouselWidth) {
@@ -558,7 +558,7 @@ export default {
         }
         
         container.style.transform = `translateX(-${currentPosition}px)`
-      }, 50)
+      }, 30)
     }
 
     // 访问统计（纯前端，本地浏览次数）
@@ -1181,26 +1181,26 @@ export default {
   position: absolute;
   top: 0;
   left: 0;
-  transition: transform 0.1s linear;
+  transition: transform 0.05s linear;
 }
 
 .skill-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 0 5px;
-  min-width: 40px;
+  margin: 0 8px;
+  min-width: 45px;
 }
 
 .skill-icon {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   object-fit: contain;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
 }
 
 .skill-name {
-  font-size: 8px;
+  font-size: 9px;
   color: rgba(255, 255, 255, 0.8);
 }
 
