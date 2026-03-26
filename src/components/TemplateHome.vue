@@ -204,10 +204,10 @@
           <div class="cover-outer">
             <div class="cover-inner">
               <img :src="musicModal.cover" :alt="musicModal.title" class="music-cover" :class="{ 'playing': musicModal.isPlaying }">
-              <div v-if="!musicModal.isPlaying" class="play-button-overlay" @click="() => { musicModal.isPlaying = true; $refs.audio.play() }">
+              <div v-if="!musicModal.isPlaying" class="play-button-overlay" @click="() => { musicModal.isPlaying = true; audioRef.value.play() }">
                 <span class="play-icon">▶</span>
               </div>
-              <div v-if="musicModal.isPlaying" class="play-button-overlay" @click="() => { musicModal.isPlaying = false; $refs.audio.pause() }">
+              <div v-if="musicModal.isPlaying" class="play-button-overlay" @click="() => { musicModal.isPlaying = false; audioRef.value.pause() }">
                 <span class="pause-icon">❚❚</span>
               </div>
             </div>
@@ -241,7 +241,7 @@
         </div>
       </div>
       
-      <audio ref="audio" :src="musicModal.musicUrl" :loop="musicModal.isLoop" @timeupdate="handleTimeUpdate" @loadedmetadata="handleLoadedMetadata" @ended="musicModal.isPlaying = false"></audio>
+      <audio ref="audioRef" :src="musicModal.musicUrl" :loop="musicModal.isLoop" @timeupdate="handleTimeUpdate" @loadedmetadata="handleLoadedMetadata" @ended="musicModal.isPlaying = false"></audio>
     </div>
   </div>
 
@@ -270,7 +270,7 @@
       <button v-if="!videoModal.isFullscreen" class="close-btn" @click="closeVideoModal">&times;</button>
       
       <div class="video-player">
-        <video ref="video" :src="videoModal.videoUrl" @click="toggleVideoPlay" @play="videoModal.isPlaying = true" @pause="videoModal.isPlaying = false" controls="false">
+        <video ref="videoRef" :src="videoModal.videoUrl" @click="toggleVideoPlay" @play="videoModal.isPlaying = true" @pause="videoModal.isPlaying = false" controls="false">
           <source :src="videoModal.videoUrl" type="video/mp4">
         </video>
         
@@ -651,15 +651,15 @@ export default {
 
     // 音乐时间更新处理
     const handleTimeUpdate = () => {
-      if ($refs.audio) {
-        musicModal.currentTime = $refs.audio.currentTime
+      if (audioRef.value) {
+        musicModal.currentTime = audioRef.value.currentTime
       }
     }
 
     // 音乐加载元数据处理
     const handleLoadedMetadata = () => {
-      if ($refs.audio) {
-        musicModal.duration = $refs.audio.duration
+      if (audioRef.value) {
+        musicModal.duration = audioRef.value.duration
       }
     }
 
@@ -672,19 +672,19 @@ export default {
       const percentage = clickX / width
       const time = percentage * musicModal.duration
       
-      if ($refs.audio) {
-        $refs.audio.currentTime = time
+      if (audioRef.value) {
+        audioRef.value.currentTime = time
         musicModal.currentTime = time
       }
     }
 
     // 视频播放切换
     const toggleVideoPlay = () => {
-      if ($refs.video) {
+      if (videoRef.value) {
         if (videoModal.isPlaying) {
-          $refs.video.pause()
+          videoRef.value.pause()
         } else {
-          $refs.video.play()
+          videoRef.value.play()
         }
       }
     }
@@ -700,6 +700,10 @@ export default {
         videoModal.isFullscreen = false
       }
     }
+
+    // 音频和视频引用
+    const audioRef = ref(null)
+    const videoRef = ref(null)
 
     // 创建弹幕
     const createDanmaku = (text) => {
@@ -864,6 +868,8 @@ export default {
       videoModal,
       musicDanmakus,
       videoDanmakus,
+      audioRef,
+      videoRef,
       handleTagClick,
       closeImageModal,
       closeMusicModal,
@@ -1017,7 +1023,7 @@ export default {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -1225,7 +1231,7 @@ export default {
 
 .video-modal-content {
   position: relative;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.5);
   border-radius: 15px;
   overflow: hidden;
   max-width: 90%;
@@ -1233,6 +1239,7 @@ export default {
   width: auto;
   height: auto;
   animation: modalSlideIn 0.3s ease-out;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
 .video-player {
@@ -1350,19 +1357,25 @@ video {
 }
 
 .play-icon-circle {
-  width: 80px;
-  height: 80px;
+  width: 100px;
+  height: 100px;
   background: rgba(0, 0, 0, 0.5);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .play-icon-circle:hover {
   background: rgba(0, 0, 0, 0.7);
   transform: scale(1.1);
+}
+
+.play-icon-circle .play-icon {
+  font-size: 40px;
+  margin-left: 5px;
 }
 
 .video-controls {
@@ -1377,6 +1390,7 @@ video {
   align-items: center;
   opacity: 0;
   transition: opacity 0.3s ease;
+  backdrop-filter: blur(10px);
 }
 
 .video-player:hover .video-controls {
@@ -1386,7 +1400,7 @@ video {
 .controls-left, .controls-right {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 20px;
 }
 
 .play-pause-btn, .fullscreen-btn {
@@ -1403,6 +1417,7 @@ video {
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .play-pause-btn:hover, .fullscreen-btn:hover {
