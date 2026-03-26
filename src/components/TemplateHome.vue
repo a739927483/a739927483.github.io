@@ -34,12 +34,14 @@
     </div>
     <div class="zww-right">
       <header>
-        <div class="profile-section">
-          <div class="logo" style="background-image: url(/images/logo.png);">
-            <img style="position: absolute;top:-15%;left:-10%;width: 120%; aspect-ratio: 1/1;"
-              src="/images/avatar.png">
+        <div class="profile-container">
+          <div class="profile-left">
+            <div class="logo" style="background-image: url(/images/logo.png);">
+              <img style="position: absolute;top:-15%;left:-10%;width: 120%; aspect-ratio: 1/1;"
+                src="/images/avatar.png">
+            </div>
           </div>
-          <div class="profile-info">
+          <div class="profile-right">
             <div class="welcome">
               Hello, I'm <span class="gradientText">{{ displayName }}</span>
             </div>
