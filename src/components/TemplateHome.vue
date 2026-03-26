@@ -256,8 +256,8 @@
         </div>
         
         <!-- 歌词显示区域 -->
-        <div class="lyrics-container" v-if="musicModal.showLyrics">
-          <div class="lyrics-content" ref="lyricsContentRef">
+        <div class="lyrics-container" v-if="musicModal.showLyrics" ref="lyricsContentRef">
+          <div class="lyrics-content">
             <div v-for="(line, index) in musicModal.lyrics" :key="index" 
                  :class="{ 'current': index === musicModal.currentLyricIndex }">
               {{ line.text }}
