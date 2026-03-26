@@ -13,12 +13,8 @@
           src="/images/avatar.png">
       </div>
       <div class="left-div skill-carousel">
-        <div class="skill-carousel-container">
-          <div class="skill-item" v-for="(skill, index) in skills" :key="index">
-            <img :src="skill.icon" :alt="skill.name" class="skill-icon">
-            <span class="skill-name">{{ skill.name }}</span>
-          </div>
-          <div class="skill-item" v-for="(skill, index) in skills" :key="'copy-' + index">
+        <div class="skill-carousel-container" ref="carouselContainerRef">
+          <div class="skill-item" v-for="(skill, index) in skills" :key="skill.name">
             <img :src="skill.icon" :alt="skill.name" class="skill-icon">
             <span class="skill-name">{{ skill.name }}</span>
           </div>
@@ -532,6 +528,38 @@ export default {
       { name: 'Svelte', icon: '/skill-icons/Svelte.svg' },
       { name: 'Redux', icon: '/skill-icons/Redux.svg' },
     ])
+    
+    // 轮播控制
+    const carouselContainerRef = ref(null)
+    let carouselInterval = null
+    let currentPosition = 0
+    
+    // 启动技能轮播
+    const startSkillCarousel = () => {
+      if (!carouselContainerRef.value) return
+      
+      const container = carouselContainerRef.value
+      const containerWidth = container.scrollWidth
+      const carouselWidth = container.clientWidth
+      
+      if (containerWidth <= carouselWidth) return
+      
+      // 清理之前的定时器
+      if (carouselInterval) {
+        clearInterval(carouselInterval)
+      }
+      
+      carouselInterval = setInterval(() => {
+        currentPosition += 2
+        
+        // 当滚动到末尾时，重置位置
+        if (currentPosition >= containerWidth - carouselWidth) {
+          currentPosition = 0
+        }
+        
+        container.style.transform = `translateX(-${currentPosition}px)`
+      }, 50)
+    }
 
     // 访问统计（纯前端，本地浏览次数）
     const visitors = reactive({ today: 0, total: 0 })
@@ -1061,6 +1089,19 @@ export default {
       // 绑定弹窗事件
       bindModalEvents()
       bindEscKey()
+      
+      // 启动技能轮播
+      nextTick(() => {
+        startSkillCarousel()
+      })
+    })
+    
+    onBeforeUnmount(() => {
+      // 清理轮播定时器
+      if (carouselInterval) {
+        clearInterval(carouselInterval)
+        carouselInterval = null
+      }
     })
 
     return {
@@ -1072,6 +1113,7 @@ export default {
       exp,
       tags,
       skills,
+      carouselContainerRef,
       visitors,
       isDarkMode,
       toggleMode,
@@ -1130,41 +1172,35 @@ export default {
 .skill-carousel {
   margin-top: 20px;
   overflow: hidden;
-  height: 60px;
+  height: 50px;
   position: relative;
 }
 
 .skill-carousel-container {
   display: flex;
-  animation: skillCarousel 8s linear infinite;
-}
-
-@keyframes skillCarousel {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
+  position: absolute;
+  top: 0;
+  left: 0;
+  transition: transform 0.1s linear;
 }
 
 .skill-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 0 10px;
-  min-width: 50px;
+  margin: 0 5px;
+  min-width: 40px;
 }
 
 .skill-icon {
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
   object-fit: contain;
-  margin-bottom: 3px;
+  margin-bottom: 2px;
 }
 
 .skill-name {
-  font-size: 10px;
+  font-size: 8px;
   color: rgba(255, 255, 255, 0.8);
 }
 
