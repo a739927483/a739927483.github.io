@@ -692,21 +692,14 @@ export default {
     const scrollToCurrentLyric = () => {
       if (lyricsContentRef.value && musicModal.currentLyricIndex >= 0) {
         const container = lyricsContentRef.value
-        const lyricElements = container.querySelectorAll('.lyrics-content div')
-        const currentLyric = lyricElements[musicModal.currentLyricIndex]
+        const currentLyric = container.querySelector('.current')
         
         if (currentLyric) {
-          const lyricHeight = currentLyric.clientHeight
-          
-          let scrollTop = 0
-          
-          // 当歌词索引大于3时（第4行之后），向上滚动一行的高度
-          if (musicModal.currentLyricIndex > 3) {
-            scrollTop = (musicModal.currentLyricIndex - 3) * lyricHeight
-          }
-          
-          // 立即滚动
-          container.scrollTop = Math.max(0, scrollTop)
+          // 直接让当前歌词滚动到可视区域的顶部
+          currentLyric.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          })
         }
       }
     }
