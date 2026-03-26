@@ -513,16 +513,24 @@ export default {
     
     // 技能数据
     const skills = ref([
+      { name: 'Vue', icon: '/skill-icons/VueJS-Dark.svg' },
+      { name: 'React', icon: '/skill-icons/React-Dark.svg' },
       { name: 'JavaScript', icon: '/skill-icons/JavaScript.svg' },
+      { name: 'TypeScript', icon: '/skill-icons/TypeScript.svg' },
       { name: 'HTML', icon: '/skill-icons/HTML.svg' },
       { name: 'CSS', icon: '/skill-icons/CSS.svg' },
+      { name: 'Node.js', icon: '/skill-icons/NodeJS-Dark.svg' },
       { name: 'Git', icon: '/skill-icons/Git.svg' },
       { name: 'Docker', icon: '/skill-icons/Docker.svg' },
       { name: 'MongoDB', icon: '/skill-icons/MongoDB.svg' },
-      { name: 'Node.js', icon: '/skill-icons/NodeJS-Dark.svg' },
-      { name: 'Java', icon: '/skill-icons/Java-Dark.svg' },
-      { name: 'Linux', icon: '/skill-icons/Linux-Dark.svg' },
       { name: 'MySQL', icon: '/skill-icons/MySQL-Dark.svg' },
+      { name: 'Linux', icon: '/skill-icons/Linux-Dark.svg' },
+      { name: 'Java', icon: '/skill-icons/Java-Dark.svg' },
+      { name: 'Vite', icon: '/skill-icons/Vite-Dark.svg' },
+      { name: 'Tailwind', icon: '/skill-icons/TailwindCSS-Dark.svg' },
+      { name: 'Three.js', icon: '/skill-icons/ThreeJS-Dark.svg' },
+      { name: 'Svelte', icon: '/skill-icons/Svelte.svg' },
+      { name: 'Redux', icon: '/skill-icons/Redux.svg' },
     ])
 
     // 访问统计（纯前端，本地浏览次数）
@@ -1122,13 +1130,13 @@ export default {
 .skill-carousel {
   margin-top: 20px;
   overflow: hidden;
-  height: 80px;
+  height: 60px;
   position: relative;
 }
 
 .skill-carousel-container {
   display: flex;
-  animation: skillCarousel 20s linear infinite;
+  animation: skillCarousel 8s linear infinite;
 }
 
 @keyframes skillCarousel {
@@ -1144,19 +1152,19 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 0 15px;
-  min-width: 60px;
+  margin: 0 10px;
+  min-width: 50px;
 }
 
 .skill-icon {
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   object-fit: contain;
-  margin-bottom: 5px;
+  margin-bottom: 3px;
 }
 
 .skill-name {
-  font-size: 12px;
+  font-size: 10px;
   color: rgba(255, 255, 255, 0.8);
 }
 
