@@ -702,8 +702,8 @@ export default {
           const lyricTop = currentLyric.offsetTop
           const lyricHeight = currentLyric.clientHeight
           
-          // 计算滚动位置，使当前歌词居中
-          const scrollTop = lyricTop - containerHeight / 2 + lyricHeight / 2
+          // 计算滚动位置，使当前歌词居中，调整为偏上显示
+          const scrollTop = lyricTop - containerHeight / 3
           
           // 立即滚动
           container.scrollTop = Math.max(0, scrollTop)
