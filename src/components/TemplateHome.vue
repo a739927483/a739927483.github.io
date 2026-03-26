@@ -251,8 +251,7 @@ export default {
           snakeImg.src = '/svg/snake-Dark.svg'
         }
         if (background) {
-          background.style.backgroundImage = 'none'
-          background.style.backgroundColor = 'var(--main_bg_color)'
+          background.style.backgroundImage = 'url(/images/night-background.jpg)'
         }
       } else {
         html.removeAttribute('data-theme')
@@ -260,7 +259,7 @@ export default {
           snakeImg.src = '/svg/snake-Light.svg'
         }
         if (background) {
-          background.style.backgroundImage = 'url(/images/background.jpg)'
+          background.style.backgroundImage = 'url(/images/day-background.jpg)'
         }
       }
     }
