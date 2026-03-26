@@ -8,10 +8,6 @@
 
   <div class="zww-main">
     <div class="zww-left">
-      <div class="logo" style="background-image: url(/images/logo.png);">
-        <img style="position: absolute;top:-15%;left:-10%;width: 120%; aspect-ratio: 1/1;"
-          src="/images/avatar.png">
-      </div>
       <div class="left-div skill-carousel">
         <div class="skill-carousel-container" ref="carouselContainerRef">
           <div class="skill-item" v-for="(skill, index) in skills" :key="skill.name">
@@ -38,21 +34,25 @@
     </div>
     <div class="zww-right">
       <header>
-        <div class="index-logo" style="background-image: url(/images/avatar.png);">
-          <img style="position: absolute;top:-15%;left:-10%;width: 120%; aspect-ratio: 1/1;"
-            src="/images/avatar.png">
-        </div>
-        <div class="welcome">
-          Hello, I'm <span class="gradientText">{{ displayName }}</span>
-        </div>
-        <div class="description">
-          <span class="purpleText">{{ jobTitle.split('（')[0] }}</span> {{ jobTitle.split('（')[1] }}
-        </div>
-        <div class="description">
-          <span class="purpleText">{{ age }}</span> years old ({{ age }}岁)
-        </div>
-        <div class="description">
-          <span class="purpleText">{{ experienceLabel.split(' ')[0] }}</span> {{ experienceLabel.split(' ').slice(1).join(' ') }}
+        <div class="profile-section">
+          <div class="logo" style="background-image: url(/images/logo.png);">
+            <img style="position: absolute;top:-15%;left:-10%;width: 120%; aspect-ratio: 1/1;"
+              src="/images/avatar.png">
+          </div>
+          <div class="profile-info">
+            <div class="welcome">
+              Hello, I'm <span class="gradientText">{{ displayName }}</span>
+            </div>
+            <div class="description">
+              <span class="purpleText">{{ jobTitle.split('（')[0] }}</span> {{ jobTitle.split('（')[1] }}
+            </div>
+            <div class="description">
+              <span class="purpleText">{{ age }}</span> years old ({{ age }}岁)
+            </div>
+            <div class="description">
+              <span class="purpleText">{{ experienceLabel.split(' ')[0] }}</span> {{ experienceLabel.split(' ').slice(1).join(' ') }}
+            </div>
+          </div>
         </div>
 
         <div class="iconContainer">

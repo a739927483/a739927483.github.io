@@ -192,6 +192,24 @@ body {
     border-radius: 50%;
 }
 
+.profile-section {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.profile-section .logo {
+    width: 100px;
+    height: 100px;
+    margin-right: 20px;
+    margin-top: 0;
+    flex-shrink: 0;
+}
+
+.profile-info {
+    flex: 1;
+}
+
 
 
 
@@ -686,9 +704,16 @@ footer {
         display: none;
     }
     
-    .logo {
-        width: 120px;
-        margin-top: 20px;
+    .profile-section {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .profile-section .logo {
+        width: 80px;
+        height: 80px;
+        margin-right: 0;
+        margin-bottom: 15px;
     }
     
     .tlDate {
