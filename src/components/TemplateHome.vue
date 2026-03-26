@@ -746,14 +746,13 @@ export default {
         }
       }
       
-      if (newIndex !== musicModal.currentLyricIndex) {
-        musicModal.currentLyricIndex = newIndex
-        
-        // 使用nextTick确保DOM更新后再滚动
-        nextTick(() => {
-          scrollToCurrentLyric()
-        })
-      }
+      // 强制更新索引并滚动，确保拖动进度条和歌词变更时都能触发滚动
+      musicModal.currentLyricIndex = newIndex
+      
+      // 使用nextTick确保DOM更新后再滚动
+      nextTick(() => {
+        scrollToCurrentLyric()
+      })
     }
 
     // 音乐进度条点击处理
