@@ -741,16 +741,18 @@ export default {
     const updateLyricIndex = (currentTime) => {
       if (musicModal.lyrics.length === 0) return
       
-      let newIndex = 0
+      let newIndex = -1
       
-      // 从前往后查找，找到第一个时间大于当前时间的歌词，然后取前一个
+      // 正向遍历，找到所有时间小于等于当前时间的歌词，取最后一个
       for (let i = 0; i < musicModal.lyrics.length; i++) {
-        if (musicModal.lyrics[i].time > currentTime) {
-          newIndex = Math.max(0, i - 1)
-          break
-        } else if (i === musicModal.lyrics.length - 1) {
+        if (musicModal.lyrics[i].time <= currentTime) {
           newIndex = i
         }
+      }
+      
+      // 如果没有找到，使用第一个歌词
+      if (newIndex === -1) {
+        newIndex = 0
       }
       
       // 只有当索引改变时才更新和滚动
