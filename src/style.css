@@ -67,7 +67,7 @@ html[data-theme="Dark"] {
     --item_bg_color: rgb(19, 20, 24);
     --item_hover_color: rgb(19, 23, 27);
     --item_left_title_color: rgb(255, 255, 255);
-    --item_left_text_color: rgb(142, 142, 142);
+    --item_left_text_color: rgb(200, 200, 200);
     --footer_text_color: #646464;
     --left_tag_item: linear-gradient(50deg, #1f2327, #000000);
     --card_filter: 0px;
@@ -879,7 +879,7 @@ footer {
     --item_bg_color: rgb(19, 20, 24);
     --item_hover_color: rgb(19, 23, 27);
     --item_left_title_color: rgb(255, 255, 255);
-    --item_left_text_color: rgb(142, 142, 142);
+    --item_left_text_color: rgb(200, 200, 200);
     --footer_text_color: #646464;
     --left_tag_item: linear-gradient(50deg, #1f2327, #000000);
     --card_filter: 0px;
