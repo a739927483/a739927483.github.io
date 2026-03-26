@@ -741,29 +741,25 @@ export default {
     const updateLyricIndex = (currentTime) => {
       if (musicModal.lyrics.length === 0) return
       
-      let newIndex = -1
+      let newIndex = 0
       
-      // 正向遍历，找到所有时间小于等于当前时间的歌词，取最后一个
+      // 从前往后查找，找到第一个时间大于当前时间的歌词
       for (let i = 0; i < musicModal.lyrics.length; i++) {
-        if (musicModal.lyrics[i].time <= currentTime) {
+        if (musicModal.lyrics[i].time > currentTime) {
+          newIndex = Math.max(0, i - 1)
+          break
+        } else if (i === musicModal.lyrics.length - 1) {
           newIndex = i
         }
       }
       
-      // 如果没有找到，使用第一个歌词
-      if (newIndex === -1) {
-        newIndex = 0
-      }
+      // 强制更新索引并滚动，确保时间同步
+      musicModal.currentLyricIndex = newIndex
       
-      // 只有当索引改变时才更新和滚动
-      if (newIndex !== musicModal.currentLyricIndex) {
-        musicModal.currentLyricIndex = newIndex
-        
-        // 使用nextTick确保DOM更新后再滚动
-        nextTick(() => {
-          scrollToCurrentLyric()
-        })
-      }
+      // 使用nextTick确保DOM更新后再滚动
+      nextTick(() => {
+        scrollToCurrentLyric()
+      })
     }
 
     // 音乐进度条点击处理
