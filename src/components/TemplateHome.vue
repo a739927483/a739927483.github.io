@@ -7,33 +7,9 @@
   <div class="zww-background" id="zww-background"></div>
 
   <div class="zww-main">
-    <div class="zww-left">
-      <div class="left-div skill-carousel">
-        <div class="skill-carousel-container" ref="carouselContainerRef">
-          <div class="skill-item" v-for="(skill, index) in skills" :key="skill.name">
-            <img :src="skill.icon" :alt="skill.name" class="skill-icon">
-            <span class="skill-name">{{ skill.name }}</span>
-          </div>
-        </div>
-      </div>
-      <div class="left-div left-tag">
-        <div class="tag-container" v-for="t in tags" :key="t" @click="handleTagClick(t)">
-          {{ t }}
-        </div>
-      </div>
-      <div class="left-div left-time timeline">
-        <div class="sectionTitle">经历</div>
-        <div class="timelineItem">
-          <div class="tlDot" aria-hidden="true" />
-          <div class="tlText">
-            <div class="tlCompany">{{ exp.name }}</div>
-            <div class="tlDate">{{ exp.date }}</div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="zww-right">
-      <header>
+    <div class="zww-content">
+      <!-- 上方区域：个人信息 + 技能轮播 -->
+      <div class="top-section">
         <div class="profile-container">
           <div class="profile-left">
             <div class="logo" style="background-image: url(/images/logo.png);">
@@ -56,6 +32,37 @@
             </div>
           </div>
         </div>
+        <div class="skill-carousel">
+          <div class="skill-carousel-container" ref="carouselContainerRef">
+            <div class="skill-item" v-for="(skill, index) in skills" :key="skill.name">
+              <img :src="skill.icon" :alt="skill.name" class="skill-icon">
+              <span class="skill-name">{{ skill.name }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- 下方区域：标签 + 经历 -->
+      <div class="bottom-section">
+        <div class="left-div left-tag">
+          <div class="tag-container" v-for="t in tags" :key="t" @click="handleTagClick(t)">
+            {{ t }}
+          </div>
+        </div>
+        <div class="left-div left-time timeline">
+          <div class="sectionTitle">经历</div>
+          <div class="timelineItem">
+            <div class="tlDot" aria-hidden="true" />
+            <div class="tlText">
+              <div class="tlCompany">{{ exp.name }}</div>
+              <div class="tlDate">{{ exp.date }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="zww-right">
+      <header>
 
         <div class="iconContainer">
           <a class="iconItem" onclick="" href="https://github.com/a739927483">

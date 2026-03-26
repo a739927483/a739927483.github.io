@@ -162,6 +162,26 @@ body {
     flex-direction: row;
 }
 
+.zww-content {
+    flex: 1;
+    padding: 20px;
+}
+
+.top-section {
+    margin-bottom: 20px;
+}
+
+.bottom-section {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.bottom-section .left-div {
+    flex: 1;
+    min-width: 250px;
+}
+
 
 .zww-left {
     overflow-y: scroll;
@@ -661,13 +681,17 @@ footer {
         flex-direction: column;
     }
     
-    .zww-left {
-        width: 100%;
-        height: auto;
-        position: static;
-        padding: 20px;
-        align-items: center;
-        text-align: center;
+    .zww-content {
+        padding: 10px;
+    }
+    
+    .bottom-section {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .bottom-section .left-div {
+        min-width: 100%;
     }
 
     .a .projectItemRight {
