@@ -294,7 +294,7 @@ body {
     width: calc(100% - 230px);
     display: flex;
     padding: 20px;
-  position: relative;
+    position: relative;
     padding-bottom: 50px;
     flex-direction: column;
 }
@@ -635,8 +635,17 @@ footer {
 }
 
 @media (max-width: 800px) {
+    .zww-main {
+        flex-direction: column;
+    }
+    
     .zww-left {
-        display: none;
+        width: 100%;
+        height: auto;
+        position: static;
+        padding: 20px;
+        align-items: center;
+        text-align: center;
     }
 
     .a .projectItemRight {
@@ -670,6 +679,7 @@ footer {
 
     .zww-right {
         width: 100%;
+        padding: 10px;
     }
 
     .tanChiShe {

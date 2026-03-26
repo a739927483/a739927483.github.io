@@ -1174,6 +1174,7 @@ export default {
   overflow: hidden;
   height: 50px;
   position: relative;
+  width: 100%;
 }
 
 .skill-carousel-container {
@@ -1199,6 +1200,59 @@ export default {
 .skill-name {
   font-size: 9px;
   color: rgba(255, 255, 255, 0.8);
+}
+
+/* 手机端响应式 */
+@media (max-width: 800px) {
+  .skill-carousel {
+    height: 45px;
+    margin-top: 15px;
+  }
+  
+  .skill-item {
+    min-width: 40px;
+  }
+  
+  .skill-icon {
+    width: 24px;
+    height: 24px;
+  }
+  
+  .skill-name {
+    font-size: 8px;
+  }
+  
+  .left-div {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  
+  .left-div.left-tag {
+    padding: 8px;
+    gap: 8px;
+  }
+  
+  .tag-container {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+  
+  .timeline {
+    padding: 10px;
+  }
+  
+  .sectionTitle {
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+  
+  .tlCompany {
+    font-size: 14px;
+  }
+  
+  .tlDate {
+    font-size: 12px;
+  }
 }
 
 .left-div.left-tag {
