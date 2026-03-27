@@ -1,4 +1,4 @@
-﻿﻿<template>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<template>
   <div id="zww-loading">
     <div id="zww-loading-center"></div>
   </div>
@@ -55,86 +55,14 @@
           </div>
 
           <div class="iconContainer">
-            <a class="iconItem" onclick="" href="https://github.com/a739927483">
-              <svg
-                t="1704870335945"
-                class="icon"
-                viewBox="0 0 1024 1024"
-                version="1.1"
-                xmlns="http://www.w3.org/2000/svg"
-                p-id="2487"
-              >
-                <path
-                  d="M511.6 76.3C264.3 76.2 64 276.4 64 523.5 64 718.9 189.3 885 363.8 946c23.5 5.9 19.9-10.8 19.9-22.2v-77.5c-135.7 15.9-141.2-73.9-150.3-88.9C215 726 171.5 718 184.5 703c30.9-15.9 62.4 4 98.9 57.9 26.4 39.1 77.9 32.5 104 26 5.7-23.5 17.9-44.5 34.7-60.8-140.6-25.2-199.2-111-199.2-213 0-49.5 16.3-95 48.3-131.7-20.4-60.5 1.9-112.3 4.9-120 58.1-5.2 118.5 41.6 123.2 45.3 33-8.9 70.7-13.6 112.9-13.6 42.4 0 80.2 4.9 113.5 13.9 11.3-8.6 67.3-48.8 121.3-43.9 2.9 7.7 24.7 58.3 5.5 118 32.4 36.8 48.9 82.7 48.9 132.3 0 102.2-59 188.1-200 212.9 23.5 23.2 38.1 55.4 38.1 91v112.5c0.8 9 0 17.9 15 17.9 177.1-59.7 304.6-227 304.6-424.1 0-247.2-200.4-447.3-447.5-447.3z"
-                  p-id="2488"
-                ></path>
-              </svg>
-              <div class="iconTip">Github</div> </a
-            ><a
-              class="iconItem"
-              onclick=""
-              href="https://www.xiaohongshu.com/user/profile/668b3cb30000000003032770"
+            <a 
+              v-for="social in socials" 
+              :key="social.label"
+              class="iconItem" 
+              :href="social.href"
             >
-              <svg
-                t="1704870588438"
-                class="icon"
-                viewBox="0 0 1024 1024"
-                version="1.1"
-                xmlns="http://www.w3.org/2000/svg"
-                p-id="3174"
-              >
-                <path
-                  d="M926.47619 355.644952V780.190476a73.142857 73.142857 0 0 1-73.142857 73.142857H170.666667a73.142857 73.142857 0 0 1-73.142857-73.142857V355.644952l304.103619 257.828572a170.666667 170.666667 0 0 0 220.745142 0L926.47619 355.644952zM853.333333 170.666667a74.044952 74.044952 0 0 1 26.087619 4.778666 72.704 72.704 0 0 1 30.622477 22.186667 73.508571 73.508571 0 0 1 10.678857 17.67619c3.169524 7.509333 5.12 15.652571 5.607619 24.210286L926.47619 243.809524v24.380952L559.469714 581.241905a73.142857 73.142857 0 0 1-91.306666 2.901333l-3.632762-2.925714L97.52381 268.190476v-24.380952a72.899048 72.899048 0 0 1 40.155428-65.292191A72.97219 72.97219 0 0 1 170.666667 170.666667h682.666666z"
-                  p-id="3175"
-                ></path>
-              </svg>
-              <div class="iconTip">Mail</div> </a
-            ><a
-              class="iconItem"
-              onclick="pop('/images/wxzsm.jpg')"
-              href="javascript:void(0)"
-            >
-              <svg
-                t="1705247464964"
-                class="icon"
-                viewBox="0 0 1024 1024"
-                version="1.1"
-                xmlns="http://www.w3.org/2000/svg"
-                p-id="4987"
-              >
-                <path
-                  d="M995.575172 725.451034c-12.358621-26.835862-38.488276-64.794483-92.689655-94.27862-62.146207-33.721379-136.297931-40.96-208.860689-20.303448l-99.928276 28.424827-279.304828-126.057931H22.775172v489.401379h509.704828l432.375172-195.266207c15.006897-6.708966 26.835862-19.42069 32.662069-34.957241 5.649655-15.36 4.943448-31.955862-1.942069-46.962759z m-482.162758 188.910345H111.051034V601.688276h184.673104l166.664828 75.387586-3.354483 0.882759h-170.372414v88.275862H471.393103l246.819311-70.267586c49.434483-14.124138 101.517241-9.357241 142.653793 12.888275 18.184828 9.886897 30.72 20.833103 39.371034 30.896552l-386.824827 174.609655z"
-                  p-id="4988"
-                ></path>
-                <path
-                  d="M695.437241 163.486897l58.615173-142.30069h-397.24138l66.736552 143.36c-121.82069 53.142069-207.095172 174.433103-207.095172 315.674483 0 28.601379 3.531034 57.202759 10.593103 84.744827l85.627586-21.715862c-5.12-20.48-7.768276-41.666207-7.768275-63.028965 0-141.241379 114.758621-256 256-256s256 114.758621 256 256c0 51.023448-14.830345 100.104828-43.078621 142.300689l73.268965 49.08138c37.958621-56.673103 58.085517-122.88 58.085518-191.382069-0.176552-141.947586-86.686897-264.121379-209.743449-316.733793zM467.508966 91.983448h180.965517l-21.009655 50.846897a348.16 348.16 0 0 0-66.913104-6.708966c-23.834483 0-46.962759 2.471724-69.384827 7.062069l-23.657931-51.2z"
-                  p-id="4989"
-                ></path>
-                <path
-                  d="M683.431724 427.431724v-70.62069h-38.311724l30.190345-30.190344-49.964138-49.964138-62.49931 62.49931h-6.002759L494.344828 276.656552l-49.787587 49.964138 30.013793 30.190344h-38.311724v70.62069h88.275862v35.310345h-88.275862v70.62069h88.275862v52.965517h70.62069v-52.965517h88.275862v-70.62069h-88.275862v-35.310345z"
-                  p-id="4990"
-                ></path>
-              </svg>
-              <div class="iconTip">帮助</div> </a
-            ><a
-              class="iconItem"
-              onclick="pop('/images/qq.jpg')"
-              href="javascript:void(0)"
-            >
-              <svg
-                t="1712319361023"
-                class="icon"
-                viewBox="0 0 1024 1024"
-                version="1.1"
-                xmlns="http://www.w3.org/2000/svg"
-                p-id="1861"
-              >
-                <path
-                  d="M824.8 613.2c-16-51.4-34.4-94.6-62.7-165.3C766.5 262.2 689.3 112 511.5 112 331.7 112 256.2 265.2 261 447.9c-28.4 70.8-46.7 113.7-62.7 165.3-34 109.5-23 154.8-14.6 155.8 18 2.2 70.1-82.4 70.1-82.4 0 49 25.2 112.9 79.8 159-26.4 8.1-85.7 29.9-71.6 53.8 11.4 19.3 196.2 12.3 249.5 6.3 53.3 6 238.1 13 249.5-6.3 14.1-23.8-45.3-45.7-71.6-53.8 54.6-46.2 79.8-110.1 79.8-159 0 0 52.1 84.6 70.1 82.4 8.5-1.1 19.5-46.4-14.5-155.8z"
-                  p-id="1862"
-                ></path>
-              </svg>
-              <div class="iconTip">QQ</div>
+              <img :src="social.svg" :alt="social.label" class="icon" />
+              <div class="iconTip">{{ social.label }}</div>
             </a>
             <a class="switch" href="javascript:void(0)">
               <div class="onoffswitch">
@@ -215,41 +143,18 @@
 
           <div class="projectList">
             <a
+              v-for="work in works"
+              :key="work.title"
               class="projectItem b"
               target="_blank"
-              href="../../192.168.227.131/index.html"
+              :href="work.href"
             >
               <div class="projectItemLeft">
-                <h1>公司</h1>
-                <p>记录日常工作</p>
+                <h1>{{ work.title }}</h1>
+                <p>{{ work.desc }}</p>
               </div>
               <div class="projectItemRight">
                 <img src="/images/i1.png" alt="" />
-              </div> </a
-            ><a class="projectItem b" target="_blank" href="">
-              <div class="projectItemLeft">
-                <h1>网盘</h1>
-                <p>存储收集文件</p>
-              </div>
-              <div class="projectItemRight">
-                <img src="/images/i2.png" alt="" />
-              </div>
-            </a>
-            <a class="projectItem b" target="_blank" href="">
-              <div class="projectItemLeft">
-                <h1>测试网</h1>
-                <p>收集所有html作品</p>
-              </div>
-              <div class="projectItemRight">
-                <img src="/images/i4.png" alt="" />
-              </div> </a
-            ><a class="projectItem b" target="_blank" href="">
-              <div class="projectItemLeft">
-                <h1>测试网</h1>
-                <p>收集所有html作品</p>
-              </div>
-              <div class="projectItemRight">
-                <img src="/images/i4.png" alt="" />
               </div>
             </a>
           </div>
@@ -582,20 +487,12 @@ import {
 
 const TEMPL_TAGS = [
   "做饭",
-  "游玩",
-  "五子棋",
+  "旅游",
   "美食",
-  "美女照片",
   "音乐",
-  "汤姆猫小新",
-  "街头霸王游戏",
-  "天空之城",
+  "游戏",
   "鲜花",
-  "海贼王",
-  "巨人",
-  "不良人",
-  "不良人天降神兵",
-  "铠甲勇士",
+  "动漫",
 ];
 
 const tagConfigs = {
@@ -607,10 +504,10 @@ const tagConfigs = {
       danmakuText: "好吃",
     },
   },
-  游玩: {
+  旅游: {
     type: "image",
     config: {
-      title: "游玩作品",
+      title: "旅游照片",
       images: [],
       danmakuText: "好看",
     },
@@ -618,7 +515,7 @@ const tagConfigs = {
   美食: {
     type: "image",
     config: {
-      title: "美食",
+      title: "美食照片",
       images: [],
       danmakuText: "好吃",
     },
@@ -737,23 +634,38 @@ export default {
   name: "TemplateHome",
   setup() {
     // 使用App.vue中的数据
-    const displayName = "陈英健小队长";
-    const jobTitle = "Front-end development(前端开发工程师)";
+    const displayName = "抓娃娃小队长";
+    const jobTitle = "Front-end development(运维开发工程师)";
     const age = 27;
     const experienceLabel = "2.5 work experience (2.5年工作经验)";
 
-    // 动态设置建站日期为今天
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, "0");
-    const day = String(today.getDate()).padStart(2, "0");
-    const siteDate = `${year}-${month}-${day}`;
+    const socials = [
+        { label: 'github', href: 'https://github.com/a739927483', svg: '/public/svg/github.svg' },
+        { label: 'qq', href: '/images/qq.jpg', svg: '/public/svg/qq.svg' },
+        { label: '哔站', href: '/images/wxzsm.jpg', svg: '/public/svg/bz.svg' },
+        { label: '', href: 'https://www.xiaohongshu.com/user/profile/668b3cb30000000003032770', svg: '/public/svg/xhs.svg' },
+      ];
+
+    const works = [
+        { title: '作品集', desc: '记录前端作品 / 工具 / Demo',href: '/' },
+        { title: '文章', desc: '前端知识、工程化、踩坑笔记',href: '/' },
+        { title: '资源', desc: '常用资源、配置、模板集合',href: '/' },
+        { title: '聊天室', desc: '实时交流、问题反馈入口',href: '/' },
+      ];
+    // 建站时间数据
+  
+    const siteDate  = '2026-03-20' ;
+    // 工作经验数据
 
     const exp = reactive({
-      name: "北京某某(总部)",
+      name: "北京荣耀(外包)",
       date: "2021-2023",
-    });
-
+    },
+    {
+      name: "河南省前进化工科技集团股份有限公司",
+      date: "2024-2025",
+    }
+    );
     const tags = ref(TEMPL_TAGS);
 
     // 技能数据
@@ -1361,6 +1273,8 @@ export default {
       exp,
       tags,
       skills,
+      socials,
+      works,
       carouselContainerRef,
       visitors,
       isDarkMode,
