@@ -1,4 +1,4 @@
-﻿﻿<template>
+﻿<template>
   <div id="zww-loading">
     <div id="zww-loading-center"></div>
   </div>
@@ -196,7 +196,7 @@
         <div class="tanChiShe">
             <img id="tanChiShe" src="/svg/snake-Dark.svg" alt="" />
           </div>
-        <div class="content-section">
+        <content>
           <div class="title">
             <svg
               t="1705257422086"
@@ -274,7 +274,7 @@
             <img id="skillPc" src="/svg/skillPc.svg" alt="" srcset="" />
             <img id="skillWap" src="/svg/skillWap.svg" alt="" srcset="" />
           </div>
-        </div>
+        </content>
       </div>
     </div>
     </div>
@@ -1100,7 +1100,8 @@ export default {
       if (!audioRef.value) return;
 
       if (!musicModal.isPlaying) {
-        // 播放（从当前位置继续）
+        // 播放
+        audioRef.value.load();
         audioRef.value.volume = 1.0;
         audioRef.value.muted = false;
         audioRef.value.play().catch((err) => {

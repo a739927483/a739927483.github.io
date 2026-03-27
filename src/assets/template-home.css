@@ -141,10 +141,6 @@
   font-size: 13px;
 }
 
-/* 为内容区域添加底部边距，避免被固定页脚遮挡 */
-.zww-right {
-  padding-bottom: 80px !important;
-}
 
 /* 音乐弹窗样式 */
 .music-modal {
