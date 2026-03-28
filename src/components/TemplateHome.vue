@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<template>
+﻿﻿<template>
   <div id="zww-loading">
     <div id="zww-loading-center"></div>
   </div>
@@ -48,6 +48,9 @@
           </div>
           <div class="description">
             <span class="purpleText">{{ age }}</span> years old ({{ age }}岁)
+          </div>
+          <div class="description">
+            <span class="purpleText">男</span> 洛阳 (居家)
           </div>
           <div class="description">
             <span class="purpleText">{{ experienceLabel.split(" ")[0] }}</span>
@@ -663,7 +666,7 @@ export default {
 
     const works = [
         { title: '作品集', desc: '记录作品 / Demo',href: '/' },
-        { title: '博客', desc: '随手的笔记和学习记录',href: 'http://192.168.227.131/' },
+        { title: '博客', desc: '随手的笔记和学习记录',href: 'https://5ec02886.r7.cpolar.cn ' },
         { title: '资源', desc: '常用资源、配置、模板集合',href: '/' },
         { title: '聊天室', desc: '实时交流、问题反馈入口',href: '/' },
       ];
