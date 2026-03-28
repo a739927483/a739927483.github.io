@@ -202,6 +202,24 @@
     </div>
   </div>
 
+  <!-- 图片弹幕 -->
+  <div class="danmaku-container" v-if="imageModal.isOpen">
+    <div
+      v-for="danmaku in imageDanmakus"
+      :key="danmaku.id"
+      class="danmaku"
+      :style="{
+        top: danmaku.top + 'px',
+        left: danmaku.left + 'px',
+        opacity: danmaku.opacity,
+        fontSize: danmaku.fontSize + 'px',
+        color: danmaku.color,
+      }"
+    >
+      {{ danmaku.text }}
+    </div>
+  </div>
+
   <!-- 图片弹窗 -->
   <div class="tag-modal" v-if="imageModal.isOpen">
     <div class="modal-overlay" @click="closeImageModal"></div>
@@ -832,6 +850,7 @@ export default {
     // 弹幕状态
     const musicDanmakus = ref([]);
     const videoDanmakus = ref([]);
+    const imageDanmakus = ref([]);
     const danmakuIntervals = ref({});
 
     // 时间/深色模式切换
@@ -911,6 +930,8 @@ export default {
           imageCarouselTimer = setInterval(() => {
             nextImage();
           }, 3000);
+          // 启动弹幕
+          startDanmakus("image", tagConfig.config.danmakuText);
           break;
         case "music":
           console.log("点击音乐标签:", tagName);
@@ -974,6 +995,8 @@ export default {
         clearInterval(imageCarouselTimer);
         imageCarouselTimer = null;
       }
+      // 停止弹幕
+      stopDanmakus("image");
     };
 
     // 关闭音乐弹窗
@@ -1293,7 +1316,14 @@ export default {
         cancelAnimationFrame(animationRefs[type]);
       }
 
-      const danmakus = type === "music" ? musicDanmakus : videoDanmakus;        
+      let danmakus;
+      if (type === "music") {
+        danmakus = musicDanmakus;
+      } else if (type === "video") {
+        danmakus = videoDanmakus;
+      } else if (type === "image") {
+        danmakus = imageDanmakus;
+      }
 
       // 清空弹幕
       danmakus.value = [];
@@ -1323,7 +1353,14 @@ export default {
         cancelAnimationFrame(animationRefs[type]);
         animationRefs[type] = null;
       }
-      const danmakus = type === "music" ? musicDanmakus : videoDanmakus;        
+      let danmakus;
+      if (type === "music") {
+        danmakus = musicDanmakus;
+      } else if (type === "video") {
+        danmakus = videoDanmakus;
+      } else if (type === "image") {
+        danmakus = imageDanmakus;
+      }
       danmakus.value = [];
     };
 
@@ -1432,6 +1469,7 @@ export default {
       videoModal,
       musicDanmakus,
       videoDanmakus,
+      imageDanmakus,
       audioRef,
       videoRef,
       lyricsContentRef,
