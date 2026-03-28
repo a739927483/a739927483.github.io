@@ -1,4 +1,4 @@
-﻿<template>
+﻿﻿﻿<template>
   <div id="zww-loading">
     <div id="zww-loading-center"></div>
   </div>
@@ -565,7 +565,7 @@ const tagConfigs = {
     type: "image",
     config: {
       title: "旅游照片",
-      images: ['/public/images/tour/i1.jpg','/public/images/tour/i2.jpg','/public/images/tour/i3.jpg'],
+      images: Array.from({length: 3}, (_, i) => `/public/images/tour/i${i + 1}.jpg`),
       danmakuText: "好看",
     },
   },
@@ -573,7 +573,7 @@ const tagConfigs = {
     type: "image",
     config: {
       title: "美食照片",
-      images: [],
+      images: ['/public/images/Delicacy/i1.jpg','/public/images/Delicacy/i2.jpg'],
       danmakuText: "好吃",
     },
   },
@@ -691,7 +691,7 @@ export default {
     // 工作经验数据
 
     const exp = reactive({
-      name: "北京荣耀(外包)",
+      name: "北京荣耀",
       date: "2021-2023",
     },
     {
