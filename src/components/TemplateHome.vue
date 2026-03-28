@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<template>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<template>
   <div id="zww-loading">
     <div id="zww-loading-center"></div>
   </div>
@@ -582,16 +582,7 @@ const tagConfigs = {
     type: "image",
     config: {
       title: "游戏图片",
-      images: [
-        "/public/images/game/20250128211056_1.jpg",
-        "/public/images/game/20250129225453_1.jpg",
-        "/public/images/game/云顶之亦.jpg",
-        "/public/images/game/休闲游戏.jpg",
-        "/public/images/game/休闲游戏2.jpg",
-        "/public/images/game/休闲游戏3.jpg",
-        "/public/images/game/王者荣耀1.jpg",
-        "/public/images/game/王者荣耀2.jpg"
-      ],
+      images: "/public/images/game",
       danmakuText: "好玩",
     },
   },
@@ -897,8 +888,23 @@ export default {
           // 如果images是字符串（文件夹路径），则动态生成图片数组
           if (typeof imageConfig.images === 'string') {
             const folderPath = imageConfig.images;
-            // 动态生成图片数组（i1.jpg, i2.jpg, i3.jpg...）
-            imageConfig.images = Array.from({length: 10}, (_, i) => `${folderPath}/i${i + 1}.jpg`);
+            console.log('当前文件夹路径:', folderPath);
+            console.log('过滤条件:', folderPath.replace('/public', ''));
+            // 动态导入文件夹中的所有图片
+            try {
+              // 使用import.meta.glob动态导入文件夹中的所有图片
+              const images = import.meta.glob('../../public/images/**/*.{jpg,jpeg,png,gif}', { eager: true });
+              console.log('所有匹配的图片:', Object.keys(images));
+              // 过滤出当前文件夹的图片
+              imageConfig.images = Object.keys(images)
+                .filter(key => key.includes(folderPath.replace('/public', '')))
+                .map(key => '/' + key.replace('../../', ''));
+              console.log('过滤后的图片:', imageConfig.images);
+            } catch (error) {
+              console.error('动态导入图片失败:', error);
+              // 降级方案：使用原有的命名方式
+              imageConfig.images = Array.from({length: 10}, (_, i) => `${folderPath}/i${i + 1}.jpg`);
+            }
           }
           
           Object.assign(imageModal, {
