@@ -1,4 +1,4 @@
-﻿﻿<template>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<template>
   <div id="zww-loading">
     <div id="zww-loading-center"></div>
   </div>
@@ -18,7 +18,8 @@
               width: 120%;
               aspect-ratio: 1/1;
             "
-            src="/images/avatar.png"
+            data-src="/images/avatar.png"
+            class="lazy"
           />
         </div>
       </div>
@@ -36,7 +37,8 @@
                 width: 120%;
                 aspect-ratio: 1/1;
               "
-              src="/images/avatar.png"
+              data-src="/images/avatar.png"
+              class="lazy"
             />
           </div>
           <div class="welcome">
@@ -64,7 +66,7 @@
               class="iconItem" 
               :href="social.href"
             >
-              <img :src="social.svg" :alt="social.label" class="icon" />
+              <img :data-src="social.svg" :alt="social.label" class="icon lazy" />
               <div class="iconTip">{{ social.label }}</div>
             </a>
             <a class="switch" href="javascript:void(0)">
@@ -99,7 +101,7 @@
                 :key="`${skill.name}-${dup}-${index}`"
                 :aria-hidden="dup === 2 ? 'true' : undefined"
               >
-                <img :src="skill.icon" :alt="skill.name" class="skill-icon" />
+                <img :data-src="skill.icon" :alt="skill.name" class="skill-icon lazy" />
                 <span class="skill-name">{{ skill.name }}</span>
               </div>
             </template>
@@ -128,7 +130,7 @@
       </div>
       <div class="zww-right">
         <div class="tanChiShe">
-            <img id="tanChiShe" src="/svg/snake-Dark.svg" alt="" />
+            <img id="tanChiShe" data-src="/svg/snake-Dark.svg" alt="" class="lazy" />
           </div>
         <div class="content-section">
           <div class="title">
@@ -161,8 +163,9 @@
               </div>
               <div class="projectItemRight">
                 <img 
-                  :src="['/images/i1.png', '/images/i2.png', '/images/i3.png', '/images/i4.png'][index % 4]" 
+                  :data-src="['/images/i1.png', '/images/i2.png', '/images/i3.png', '/images/i4.png'][index % 4]" 
                   :alt="work.title" 
+                  class="lazy"
                 />
               </div>
             </a>
@@ -185,8 +188,8 @@
             skills
           </div>
           <div class="skill">
-            <img id="skillPc" src="/svg/skillPc.svg" alt="" srcset="" />
-            <img id="skillWap" src="/svg/skillWap.svg" alt="" srcset="" />
+            <img id="skillPc" data-src="/svg/skillPc.svg" alt="" srcset="" class="lazy" />
+            <img id="skillWap" data-src="/svg/skillWap.svg" alt="" srcset="" class="lazy" />
           </div>
         </div>
       </div>
@@ -988,9 +991,45 @@ export default {
     const nextImage = () => {
       if (imageModal.images.length > 0) {
         currentImageIndex.value = (currentImageIndex.value + 1) % imageModal.images.length;
+        // 预加载相邻图片
+        preloadAdjacentImages();
       }
     };
     
+    // 预加载图片
+    const preloadImage = (src) => {
+      if (!src) return;
+      const img = new Image();
+      img.src = src;
+    };
+
+    // 预加载下一张和上一张图片
+    const preloadAdjacentImages = () => {
+      if (imageModal.images.length<= 1) return;
+      
+      const current = currentImageIndex.value;
+      const total = imageModal.images.length;
+      
+      // 预加载下一张
+      const nextIndex = (current + 1) % total;
+      preloadImage(imageModal.images[nextIndex]);
+      
+      // 预加载上一张
+      const prevIndex = (current - 1 + total) % total;
+      preloadImage(imageModal.images[prevIndex]);
+    };
+
+    // 加载弹窗图片
+    const loadModalImage = () =>{
+      const modalImage = document.querySelector('.carousel-image');
+      if (modalImage && imageModal.images.length > 0) {
+        const src = imageModal.images[currentImageIndex.value];
+        modalImage.src = src;
+        // 预加载相邻图片
+        preloadAdjacentImages();
+      }
+    };
+
     // 图片加载错误处理
     const handleImageError = (index) => {
       if (imageModal.images && imageModal.images[index]) {
@@ -1000,6 +1039,8 @@ export default {
         if (currentImageIndex.value >= imageModal.images.length) {
           currentImageIndex.value = 0;
         }
+        // 重新加载图片
+        loadModalImage();
       }
     };
     
@@ -1007,6 +1048,8 @@ export default {
     const prevImage = () => {
       if (imageModal.images.length > 0) {
         currentImageIndex.value = (currentImageIndex.value - 1 + imageModal.images.length) % imageModal.images.length;
+        // 预加载相邻图片
+        preloadAdjacentImages();
       }
     };
     
@@ -1240,6 +1283,48 @@ export default {
     const videoRef = ref(null);
     const lyricsContentRef = ref(null);
 
+    // 懒加载初始化函数
+    const initLazyLoading = () => {
+      const lazyImages = document.querySelectorAll('img.lazy');
+      
+      const lazyLoad = (target) => {
+        const io = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const img = entry.target;
+              const src = img.getAttribute('data-src');
+              
+              if (src) {
+                img.src = src;
+                img.classList.remove('lazy');
+              }
+              
+              observer.disconnect();
+            }
+          });
+        });
+        
+        io.observe(target);
+      };
+      
+      lazyImages.forEach(lazyLoad);
+    };
+
+    // 预加载关键图片
+    const preloadCriticalImages = () => {
+      const criticalImages = [
+        '/images/avatar.png',
+        '/images/logo.png',
+        '/images/day-background.jpg',
+        '/images/night-background.jpg'
+      ];
+      
+      criticalImages.forEach(src => {
+        const img = new Image();
+        img.src = src;
+      });
+    };
+
     // 弹幕配置
     const danmakuConfig = {
       opacity: 0.8,
@@ -1464,6 +1549,12 @@ export default {
         startSkillCarousel();
       });
       window.addEventListener("resize", onSkillCarouselResize);
+
+      // 初始化懒加载
+      initLazyLoading();
+      
+      // 预加载关键图片
+      preloadCriticalImages();
     });
 
     onBeforeUnmount(() => {
