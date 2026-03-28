@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿<template>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<template>
   <div id="zww-loading">
     <div id="zww-loading-center"></div>
   </div>
@@ -558,7 +558,7 @@ const tagConfigs = {
     type: "image",
     config: {
       title: "做饭",
-      images: [],
+      images: "/public/images/cook",
       danmakuText: "好吃",
     },
   },
@@ -574,19 +574,25 @@ const tagConfigs = {
     type: "image",
     config: {
       title: "美食照片",
-      images: ['/public/images/Delicacy/i1.jpg','/public/images/Delicacy/i2.jpg'],
+      images: "/public/images/delicacy",
       danmakuText: "好吃",
     },
   },
-  五子棋: {
-    type: "music",
+  游戏: {
+    type: "image",
     config: {
-      title: "wuha",
-      musicUrl: "/music/test.mp3",
-      cover: "/images/wuha.jpg",
-      author: "鹿晗&邓超&陈赫&王祖蓝&张艺兴&Gem&王珞丹",
-      danmakuText: "好听",
-      lrcUrl: "/ci/test.lrc",
+      title: "游戏图片",
+      images: [
+        "/public/images/game/20250128211056_1.jpg",
+        "/public/images/game/20250129225453_1.jpg",
+        "/public/images/game/云顶之亦.jpg",
+        "/public/images/game/休闲游戏.jpg",
+        "/public/images/game/休闲游戏2.jpg",
+        "/public/images/game/休闲游戏3.jpg",
+        "/public/images/game/王者荣耀1.jpg",
+        "/public/images/game/王者荣耀2.jpg"
+      ],
+      danmakuText: "好玩",
     },
   },
   天空之城: {
@@ -622,28 +628,12 @@ const tagConfigs = {
       lrcUrl: "/ci/test.lrc",
     },
   },
-  汤姆猫小新: {
-    type: "video",
-    config: {
-      title: "汤姆猫小新",
-      videoUrl: "",
-      danmakuText: "汤姆猫小新",
-    },
-  },
   美女照片: {
     type: "video",
     config: {
       title: "美女照片",
       videoUrl: "",
       danmakuText: "美女照片",
-    },
-  },
-  街头霸王游戏: {
-    type: "video",
-    config: {
-      title: "街头霸王游戏",
-      videoUrl: "",
-      danmakuText: "五连，我真猛，啊！",
     },
   },
   海贼王: {
