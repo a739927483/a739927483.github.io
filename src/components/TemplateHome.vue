@@ -650,8 +650,8 @@ export default {
       ];
 
     const works = [
-        { title: '作品集', desc: '记录前端作品 / 工具 / Demo',href: '/' },
-        { title: '文章', desc: '前端知识、工程化、踩坑笔记',href: '/' },
+        { title: '作品集', desc: '记录作品 / Demo',href: '/' },
+        { title: '文章', desc: '随手的笔记和学习记录',href: '/' },
         { title: '资源', desc: '常用资源、配置、模板集合',href: '/' },
         { title: '聊天室', desc: '实时交流、问题反馈入口',href: '/' },
       ];
@@ -1131,39 +1131,103 @@ export default {
     const videoRef = ref(null);
     const lyricsContentRef = ref(null);
 
+    // 弹幕配置
+    const danmakuConfig = {
+      opacity: 0.8,
+      speed: 5,
+      isLoop: true,
+      maxLines: 10,
+      screenRatio: 0.5,
+      interval: 800,
+      fontSize: 16,
+      color: "#ffffff",
+      density: 3,
+      randomHeight: true,
+      randomSpeed: true,
+      randomSize: true,
+      zIndex: 10,
+    };
+
+    // 最大弹幕数量限制
+    const MAX_DANMAKU_COUNT = 50;
+
     // 创建弹幕
     const createDanmaku = (text) => {
-      const containerHeight = window.innerHeight * 0.5;
-      const lineHeight = 24;
+      const containerHeight = window.innerHeight * danmakuConfig.screenRatio;
+      const lineHeight = danmakuConfig.fontSize * 1.5;
       const maxTop = Math.max(0, containerHeight - lineHeight);
 
       return {
         id: Math.random().toString(36).substr(2, 9),
         text: text,
-        top: Math.random() * maxTop,
+        top: danmakuConfig.randomHeight
+          ? Math.random() * maxTop
+          : Math.random() * danmakuConfig.maxLines * lineHeight,
         left: window.innerWidth,
-        speed: 3 + Math.random() * 2,
-        opacity: 0.7 + Math.random() * 0.3,
-        fontSize: 16 + Math.random() * 8,
-        color: "#ffffff",
+        speed: danmakuConfig.randomSpeed
+          ? danmakuConfig.speed * (0.5 + Math.random())
+          : danmakuConfig.speed,
+        opacity: danmakuConfig.opacity * (0.7 + Math.random() * 0.3),
+        fontSize: danmakuConfig.randomSize
+          ? danmakuConfig.fontSize * (0.8 + Math.random() * 0.4)
+          : danmakuConfig.fontSize,
+        color: danmakuConfig.color,
       };
     };
 
-    // 更新弹幕位置
-    const updateDanmakus = (danmakus) => {
+    // 添加弹幕（带数量限制和密度控制）
+    const addDanmaku = (danmakus, text) => {
+      // 如果弹幕数量已达上限，移除最老的弹幕
+      let currentDanmakus = danmakus.value;
+      if (currentDanmakus.length >= MAX_DANMAKU_COUNT) {
+        currentDanmakus = currentDanmakus.slice(-MAX_DANMAKU_COUNT + danmakuConfig.density);
+      }
+
+      const newDanmakus = [];
+      for (let i = 0; i < danmakuConfig.density; i++) {
+        newDanmakus.push(createDanmaku(text));
+      }
+
+      danmakus.value = [...currentDanmakus, ...newDanmakus];
+    };
+
+    // 更新弹幕位置（使用时间戳节流）
+    const lastTimeRef = { current: 0 };
+    const animationRefs = { music: null, video: null };
+
+    const updateDanmakus = (danmakus, type) => {
+      const currentTime = performance.now();
+      
+      // 节流：每16ms更新一次（约60fps）
+      if (currentTime - lastTimeRef.current < 16) {
+        if (danmakuIntervals.value[type]) {
+          animationRefs[type] = requestAnimationFrame(() => updateDanmakus(danmakus, type));
+        }
+        return;
+      }
+
+      lastTimeRef.current = currentTime;
+
       danmakus.value = danmakus.value
         .map((danmaku) => ({
           ...danmaku,
           left: danmaku.left - danmaku.speed,
         }))
         .filter((danmaku) => danmaku.left > -300);
+
+      if (danmakuIntervals.value[type]) {
+        animationRefs[type] = requestAnimationFrame(() => updateDanmakus(danmakus, type));
+      }
     };
 
     // 启动弹幕
     const startDanmakus = (type, text) => {
-      // 处理之前的定时器
+      // 处理之前的定时器和动画
       if (danmakuIntervals.value[type]) {
         clearInterval(danmakuIntervals.value[type]);
+      }
+      if (animationRefs[type]) {
+        cancelAnimationFrame(animationRefs[type]);
       }
 
       const danmakus = type === "music" ? musicDanmakus : videoDanmakus;        
@@ -1171,28 +1235,19 @@ export default {
       // 清空弹幕
       danmakus.value = [];
 
-      // 添加初始弹幕
-      for (let i = 0; i < 5; i++) {
-        danmakus.value.push(createDanmaku(text));
+      // 立即添加第一批弹幕
+      addDanmaku(danmakus, text);
+
+      // 设置定时添加弹幕
+      if (danmakuConfig.isLoop) {
+        danmakuIntervals.value[type] = setInterval(() => {
+          addDanmaku(danmakus, text);
+        }, danmakuConfig.interval);
       }
 
-      // 设置定时器添加新弹幕
-      danmakuIntervals.value[type] = setInterval(() => {
-        danmakus.value.push(createDanmaku(text));
-        // 限制弹幕数量
-        if (danmakus.value.length > 50) {
-          danmakus.value = danmakus.value.slice(-50);
-        }
-      }, 800);
-
-      // 设置动画帧更新弹幕位置
-      const update = () => {
-        updateDanmakus(danmakus);
-        if (danmakuIntervals.value[type]) {
-          requestAnimationFrame(update);
-        }
-      };
-      requestAnimationFrame(update);
+      // 开始动画
+      lastTimeRef.current = performance.now();
+      animationRefs[type] = requestAnimationFrame(() => updateDanmakus(danmakus, type));
     };
 
     // 停止弹幕
@@ -1200,6 +1255,10 @@ export default {
       if (danmakuIntervals.value[type]) {
         clearInterval(danmakuIntervals.value[type]);
         delete danmakuIntervals.value[type];
+      }
+      if (animationRefs[type]) {
+        cancelAnimationFrame(animationRefs[type]);
+        animationRefs[type] = null;
       }
       const danmakus = type === "music" ? musicDanmakus : videoDanmakus;        
       danmakus.value = [];
