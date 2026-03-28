@@ -205,20 +205,50 @@
   <!-- 图片弹窗 -->
   <div class="tag-modal" v-if="imageModal.isOpen">
     <div class="modal-overlay" @click="closeImageModal"></div>
-    <div class="modal-content">
+    <div class="modal-content" @click.stop>
       <div class="modal-header">
         <h3>{{ imageModal.title }}</h3>
         <button class="close-btn" @click="closeImageModal">&times;</button>
       </div>
       <div class="modal-body">
         <p>{{ imageModal.danmakuText }}</p>
-        <div class="image-container">
-          <img
-            v-if="imageModal.images.length > 0"
-            :src="imageModal.images[0]"
-            alt="图片"
-          />
-          <p v-else>暂无图片</p>
+        <div class="image-carousel">
+          <div class="carousel-container">
+            <img
+              v-if="imageModal.images.length > 0"
+              :src="imageModal.images[currentImageIndex]"
+              :alt="`${imageModal.title} ${currentImageIndex + 1}`"
+              class="carousel-image"
+            />
+            <p v-else>暂无图片</p>
+          </div>
+          
+          <!-- 左右箭头 -->
+          <button
+            v-if="imageModal.images.length > 1"
+            class="carousel-btn carousel-prev"
+            @click="prevImage"
+          >
+            &lt;
+          </button>
+          <button
+            v-if="imageModal.images.length > 1"
+            class="carousel-btn carousel-next"
+            @click="nextImage"
+          >
+            &gt;
+          </button>
+          
+          <!-- 底部指示器 -->
+          <div class="carousel-indicators" v-if="imageModal.images.length > 1">
+            <button
+              v-for="(image, index) in imageModal.images"
+              :key="index"
+              class="indicator"
+              :class="{ active: index === currentImageIndex }"
+              @click="currentImageIndex = index"
+            ></button>
+          </div>
         </div>
       </div>
     </div>
@@ -511,7 +541,7 @@ const tagConfigs = {
     type: "image",
     config: {
       title: "旅游照片",
-      images: [],
+      images: ['/public/images/tour/i1.jpg','vite-app/public/images/tour/i2.jpg','vite-app/public/images/tour/i3.jpg'],
       danmakuText: "好看",
     },
   },
@@ -766,6 +796,11 @@ export default {
       images: [],
       danmakuText: "",
     });
+    
+    // 当前图片索引
+    const currentImageIndex = ref(0);
+    // 自动切换定时器
+    let imageCarouselTimer = null;
 
     const musicModal = reactive({
       isOpen: false,
@@ -863,10 +898,19 @@ export default {
 
       switch (tagConfig.type) {
         case "image":
+          // 重置图片索引
+          currentImageIndex.value = 0;
           Object.assign(imageModal, {
             isOpen: true,
             ...tagConfig.config,
           });
+          // 启动自动切换定时器（3秒切换一次）
+          if (imageCarouselTimer) {
+            clearInterval(imageCarouselTimer);
+          }
+          imageCarouselTimer = setInterval(() => {
+            nextImage();
+          }, 3000);
           break;
         case "music":
           console.log("点击音乐标签:", tagName);
@@ -908,9 +952,28 @@ export default {
       }
     };
 
+    // 下一张图片
+    const nextImage = () => {
+      if (imageModal.images.length > 0) {
+        currentImageIndex.value = (currentImageIndex.value + 1) % imageModal.images.length;
+      }
+    };
+    
+    // 上一张图片
+    const prevImage = () => {
+      if (imageModal.images.length > 0) {
+        currentImageIndex.value = (currentImageIndex.value - 1 + imageModal.images.length) % imageModal.images.length;
+      }
+    };
+    
     // 关闭图片弹窗
     const closeImageModal = () => {
       imageModal.isOpen = false;
+      // 清除自动切换定时器
+      if (imageCarouselTimer) {
+        clearInterval(imageCarouselTimer);
+        imageCarouselTimer = null;
+      }
     };
 
     // 关闭音乐弹窗
@@ -1376,6 +1439,9 @@ export default {
       closeImageModal,
       closeMusicModal,
       closeVideoModal,
+      nextImage,
+      prevImage,
+      currentImageIndex,
       formatTime,
       handleTimeUpdate,
       handleLoadedMetadata,
