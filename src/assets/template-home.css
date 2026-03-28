@@ -80,7 +80,7 @@
   padding: 8px;
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
   box-sizing: border-box;
 }
 
@@ -878,7 +878,7 @@ video {
   
   .left-div.left-tag {
     padding: 8px;
-    gap: 6px;
+    gap: 8px;
   }
   
   .tag-container {

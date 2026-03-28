@@ -146,7 +146,7 @@
 
           <div class="projectList">
             <a
-              v-for="work in works"
+              v-for="(work, index) in works"
               :key="work.title"
               class="projectItem b"
               target="_blank"
@@ -157,7 +157,10 @@
                 <p>{{ work.desc }}</p>
               </div>
               <div class="projectItemRight">
-                <img src="/images/i1.png" alt="" />
+                <img 
+                  :src="['/images/i1.png', '/images/i2.png', '/images/i3.png', '/images/i4.png'][index % 4]" 
+                  :alt="work.title" 
+                />
               </div>
             </a>
           </div>
@@ -229,7 +232,6 @@
         <button class="close-btn" @click="closeImageModal">&times;</button>
       </div>
       <div class="modal-body">
-        <p>{{ imageModal.danmakuText }}</p>
         <div class="image-carousel">
           <div class="carousel-container">
             <img
