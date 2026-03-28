@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<template>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<template>
   <div id="zww-loading">
     <div id="zww-loading-center"></div>
   </div>
@@ -888,21 +888,41 @@ export default {
           // 如果images是字符串（文件夹路径），则动态生成图片数组
           if (typeof imageConfig.images === 'string') {
             const folderPath = imageConfig.images;
-            console.log('当前文件夹路径:', folderPath);
-            console.log('过滤条件:', folderPath.replace('/public', ''));
-            // 动态导入文件夹中的所有图片
-            try {
-              // 使用import.meta.glob动态导入文件夹中的所有图片
-              const images = import.meta.glob('../../public/images/**/*.{jpg,jpeg,png,gif}', { eager: true });
-              console.log('所有匹配的图片:', Object.keys(images));
-              // 过滤出当前文件夹的图片
-              imageConfig.images = Object.keys(images)
-                .filter(key => key.includes(folderPath.replace('/public', '')))
-                .map(key => '/' + key.replace('../../', ''));
-              console.log('过滤后的图片:', imageConfig.images);
-            } catch (error) {
-              console.error('动态导入图片失败:', error);
-              // 降级方案：使用原有的命名方式
+            // 直接生成图片路径数组（根据实际文件命名）
+            imageConfig.images = [];
+            
+            // 根据文件夹名称生成对应的图片路径
+            if (folderPath === '/public/images/game') {
+              imageConfig.images = [
+                '/public/images/game/20250128211056_1.jpg',
+                '/public/images/game/20250129225453_1.jpg',
+                '/public/images/game/云顶之亦.jpg',
+                '/public/images/game/休闲游戏.jpg',
+                '/public/images/game/休闲游戏2.jpg',
+                '/public/images/game/休闲游戏3.jpg',
+                '/public/images/game/王者荣耀1.jpg',
+                '/public/images/game/王者荣耀2.jpg'
+              ];
+            } else if (folderPath === '/public/images/cook') {
+              imageConfig.images = [
+                '/public/images/cook/i1.jpg',
+                '/public/images/cook/i2.jpg',
+                '/public/images/cook/i3.jpg'
+              ];
+            } else if (folderPath === '/public/images/delicacy') {
+              imageConfig.images = [
+                '/public/images/delicacy/i1.jpg',
+                '/public/images/delicacy/i2.jpg'
+              ];
+            } else if (folderPath === '/public/images/tour') {
+              imageConfig.images = [
+                '/public/images/tour/i1.jpg',
+                '/public/images/tour/i2.jpg',
+                '/public/images/tour/i3.jpg',
+                '/public/images/tour/ss.jpg'
+              ];
+            } else {
+              // 默认方案：使用i1.jpg命名方式
               imageConfig.images = Array.from({length: 10}, (_, i) => `${folderPath}/i${i + 1}.jpg`);
             }
           }
