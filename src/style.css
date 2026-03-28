@@ -197,7 +197,8 @@ body {
 
 .zww-left {
     overflow-y: scroll;
-    width: 230px;
+    width: 280px;
+    box-sizing: border-box;
     display: flex;
     padding: 0 15px;
     align-items: center;
@@ -215,7 +216,7 @@ body {
     width: 90%;
     position: relative;
     aspect-ratio: 1/1;
-    margin-top: 50px;
+    margin-top: 36px;
     background-size: cover;
     border-radius: 50%;
 }
@@ -227,7 +228,7 @@ body {
     flex-shrink: 0;
     width: 100%;
     border-radius: 13px;
-    margin-top: 15px;
+    margin-top: 10px;
     padding: 20px;
     backdrop-filter: blur(var(--card_filter));
     -webkit-backdrop-filter: blur(var(--card_filter));
@@ -319,7 +320,7 @@ body {
 
 
 .zww-right {
-    width: calc(100% - 230px);
+    width: calc(100% - 280px);
     display: flex;
     padding: 5px 20px 10px;
     position: relative;

@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<template>
+﻿<template>
   <div id="zww-loading">
     <div id="zww-loading-center"></div>
   </div>
@@ -89,14 +89,17 @@
       <div class="zww-left">
         <div class="left-div skill-carousel">
           <div class="skill-carousel-container" ref="carouselContainerRef">
-            <div
-              class="skill-item"
-              v-for="(skill, index) in skills"
-              :key="skill.name"
-            >
-              <img :src="skill.icon" :alt="skill.name" class="skill-icon" />
-              <span class="skill-name">{{ skill.name }}</span>
-            </div>
+            <template v-for="dup in [1, 2]" :key="'skill-dup-' + dup">
+              <div
+                class="skill-item"
+                v-for="(skill, index) in skills"
+                :key="`${skill.name}-${dup}-${index}`"
+                :aria-hidden="dup === 2 ? 'true' : undefined"
+              >
+                <img :src="skill.icon" :alt="skill.name" class="skill-icon" />
+                <span class="skill-name">{{ skill.name }}</span>
+              </div>
+            </template>
           </div>
         </div>
         <div class="left-div left-tag">
@@ -690,36 +693,60 @@ export default {
       { name: "Redux", icon: "/skill-icons/Redux.svg" },
     ]);
 
-    // 轮播控制
+    // 轮播控制（双份 DOM + 无缝接回开头）
     const carouselContainerRef = ref(null);
-    let carouselInterval = null;
+    let carouselRafId = null;
     let currentPosition = 0;
 
-    // 启动技能轮播
+    const stopSkillCarousel = () => {
+      if (carouselRafId != null) {
+        cancelAnimationFrame(carouselRafId);
+        carouselRafId = null;
+      }
+    };
+
     const startSkillCarousel = () => {
+      stopSkillCarousel();
       if (!carouselContainerRef.value) return;
 
       const container = carouselContainerRef.value;
-      const containerWidth = container.scrollWidth;
-      const carouselWidth = container.parentElement.clientWidth;
+      const parent = container.parentElement;
+      if (!parent) return;
 
-      if (containerWidth <= carouselWidth) return;
+      const fullWidth = container.scrollWidth;
+      const singleSetWidth = fullWidth / 2;
+      const viewWidth = parent.clientWidth;
 
-      // 处理之前的定时器
-      if (carouselInterval) {
-        clearInterval(carouselInterval);
+      if (singleSetWidth <= 0 || singleSetWidth <= viewWidth) {
+        currentPosition = 0;
+        container.style.transform = "";
+        return;
       }
 
-      carouselInterval = setInterval(() => {
-        currentPosition += 2;
-
-        // 当滚动到末尾时，重置位置
-        if (currentPosition >= containerWidth - carouselWidth) {
-          currentPosition = 0;
+      const step = () => {
+        if (!carouselContainerRef.value) return;
+        const el = carouselContainerRef.value;
+        const half = el.scrollWidth / 2;
+        currentPosition += 0.325;
+        if (currentPosition >= half) {
+          currentPosition -= half;
         }
+        el.style.transform = `translate3d(-${currentPosition}px, 0, 0)`;
+        carouselRafId = requestAnimationFrame(step);
+      };
+      carouselRafId = requestAnimationFrame(step);
+    };
 
-        container.style.transform = `translateX(-${currentPosition}px)`;
-      }, 30);
+    let carouselResizeTimer = null;
+    const onSkillCarouselResize = () => {
+      clearTimeout(carouselResizeTimer);
+      carouselResizeTimer = setTimeout(() => {
+        currentPosition = 0;
+        if (carouselContainerRef.value) {
+          carouselContainerRef.value.style.transform = "";
+        }
+        nextTick(() => startSkillCarousel());
+      }, 120);
     };
 
     // 访问统计（纯前端，本地存储次数）
@@ -1254,14 +1281,13 @@ export default {
       nextTick(() => {
         startSkillCarousel();
       });
+      window.addEventListener("resize", onSkillCarouselResize);
     });
 
     onBeforeUnmount(() => {
-      // 处理轮播定时器
-      if (carouselInterval) {
-        clearInterval(carouselInterval);
-        carouselInterval = null;
-      }
+      stopSkillCarousel();
+      window.removeEventListener("resize", onSkillCarouselResize);
+      clearTimeout(carouselResizeTimer);
     });
 
     return {
