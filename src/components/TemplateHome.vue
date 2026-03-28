@@ -651,7 +651,7 @@ export default {
 
     const works = [
         { title: '作品集', desc: '记录作品 / Demo',href: '/' },
-        { title: '文章', desc: '随手的笔记和学习记录',href: '/' },
+        { title: '博客', desc: '随手的笔记和学习记录',href: 'http://192.168.227.131/' },
         { title: '资源', desc: '常用资源、配置、模板集合',href: '/' },
         { title: '聊天室', desc: '实时交流、问题反馈入口',href: '/' },
       ];
