@@ -477,7 +477,11 @@
   <!-- 视频弹窗 -->
   <div class="video-modal" v-if="videoModal.isOpen">
     <div class="modal-overlay" @click="closeVideoModal"></div>
-    <div class="video-modal-content" @click.stop>
+    <div 
+      class="video-modal-content" 
+      :class="{ fullscreen: videoModal.isFullscreen }"
+      @click.stop
+    >
       <button
         v-if="!videoModal.isFullscreen"
         class="close-btn"
@@ -559,7 +563,7 @@ const tagConfigs = {
     type: "image",
     config: {
       title: "旅游照片",
-      images: ['/public/images/tour/i1.jpg','vite-app/public/images/tour/i2.jpg','vite-app/public/images/tour/i3.jpg'],
+      images: ['/public/images/tour/i1.jpg','/public/images/tour/i2.jpg','/public/images/tour/i3.jpg'],
       danmakuText: "好看",
     },
   },
@@ -647,36 +651,12 @@ const tagConfigs = {
       danmakuText: "海贼王",
     },
   },
-  巨人: {
+  动漫: {
     type: "video",
     config: {
-      title: "巨人",
+      title: "动漫",
       videoUrl: "",
-      danmakuText: "巨人",
-    },
-  },
-  不良人: {
-    type: "video",
-    config: {
-      title: "不良人",
-      videoUrl: "",
-      danmakuText: "有品",
-    },
-  },
-  不良人天降神兵: {
-    type: "video",
-    config: {
-      title: "不良人天降神兵",
-      videoUrl: "",
-      danmakuText: "关注清白",
-    },
-  },
-  铠甲勇士: {
-    type: "video",
-    config: {
-      title: "铠甲勇士",
-      videoUrl: "",
-      danmakuText: "铠甲勇士",
+      danmakuText: "炫，酷，叼",
     },
   },
 };
