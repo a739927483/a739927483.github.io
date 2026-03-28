@@ -645,7 +645,7 @@ export default {
     const socials = [
         { label: 'github', href: 'https://github.com/a739927483', svg: '/public/svg/github.svg' },
         { label: 'qq', href: '/images/qq.jpg', svg: '/public/svg/qq.svg' },
-        { label: '哔站', href: '/images/wxzsm.jpg', svg: '/public/svg/bz.svg' },
+        { label: '哔站', href: 'https://space.bilibili.com/18192547', svg: '/public/svg/bz.svg' },
         { label: '', href: 'https://www.xiaohongshu.com/user/profile/668b3cb30000000003032770', svg: '/public/svg/xhs.svg' },
       ];
 
