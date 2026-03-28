@@ -1,4 +1,4 @@
-﻿﻿﻿<template>
+﻿﻿﻿﻿﻿﻿﻿﻿<template>
   <div id="zww-loading">
     <div id="zww-loading-center"></div>
   </div>
@@ -235,12 +235,13 @@
         <div class="image-carousel">
           <div class="carousel-container">
             <img
-              v-if="imageModal.images.length > 0"
-              :src="imageModal.images[currentImageIndex]"
-              :alt="`${imageModal.title} ${currentImageIndex + 1}`"
-              class="carousel-image"
-            />
-            <p v-else>暂无图片</p>
+                    v-if="imageModal.images.length > 0"
+                    :src="imageModal.images[currentImageIndex]"
+                    :alt="`${imageModal.title} ${currentImageIndex + 1}`"
+                    class="carousel-image"
+                    @error="handleImageError(currentImageIndex)"
+                  />
+                  <p v-else>暂无图片</p>
           </div>
           
           <!-- 左右箭头 -->
@@ -565,7 +566,7 @@ const tagConfigs = {
     type: "image",
     config: {
       title: "旅游照片",
-      images: Array.from({length: 3}, (_, i) => `/public/images/tour/i${i + 1}.jpg`),
+      images: "/public/images/tour",
       danmakuText: "好看",
     },
   },
@@ -901,9 +902,18 @@ export default {
         case "image":
           // 重置图片索引
           currentImageIndex.value = 0;
+          const imageConfig = { ...tagConfig.config };
+          
+          // 如果images是字符串（文件夹路径），则动态生成图片数组
+          if (typeof imageConfig.images === 'string') {
+            const folderPath = imageConfig.images;
+            // 动态生成图片数组（i1.jpg, i2.jpg, i3.jpg...）
+            imageConfig.images = Array.from({length: 10}, (_, i) => `${folderPath}/i${i + 1}.jpg`);
+          }
+          
           Object.assign(imageModal, {
             isOpen: true,
-            ...tagConfig.config,
+            ...imageConfig,
           });
           // 启动自动切换定时器（3秒切换一次）
           if (imageCarouselTimer) {
@@ -959,6 +969,18 @@ export default {
     const nextImage = () => {
       if (imageModal.images.length > 0) {
         currentImageIndex.value = (currentImageIndex.value + 1) % imageModal.images.length;
+      }
+    };
+    
+    // 图片加载错误处理
+    const handleImageError = (index) => {
+      if (imageModal.images && imageModal.images[index]) {
+        // 从数组中移除加载失败的图片
+        imageModal.images.splice(index, 1);
+        // 如果当前索引超出范围，重置为0
+        if (currentImageIndex.value >= imageModal.images.length) {
+          currentImageIndex.value = 0;
+        }
       }
     };
     
@@ -1459,6 +1481,7 @@ export default {
       closeImageModal,
       closeMusicModal,
       closeVideoModal,
+      handleImageError,
       nextImage,
       prevImage,
       currentImageIndex,
