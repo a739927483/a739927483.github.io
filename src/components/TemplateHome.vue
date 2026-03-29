@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<template>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<template>
   <div id="zww-loading">
     <div id="zww-loading-center"></div>
   </div>
@@ -557,6 +557,8 @@ const TEMPL_TAGS = [
   "游戏",
   "鲜花",
   "动漫",
+  "Lemon",
+  "起风了",
 ];
 
 const tagConfigs = {
@@ -592,53 +594,45 @@ const tagConfigs = {
       danmakuText: "好玩",
     },
   },
-  天空之城: {
+  起风了: {
     type: "music",
     config: {
-      title: "天空之城",
-      musicUrl: "/music/test.mp3",
-      cover: "/images/tkzdg.jpg",
-      author: "久石让",
+      title: "起风了",
+      musicUrl: "/music/起风了.mp3",
+      cover: "/images/起风了.png",
+      author: "买辣椒也用券",
       danmakuText: "好听",
-      lrcUrl: "/ci/test.lrc",
-    },
-  },
-  鲜花: {
-    type: "music",
-    config: {
-      title: "鲜花",
-      musicUrl: "/music/test.mp3",
-      cover: "/images/xh.jpg",
-      author: "凤凰传奇",
-      danmakuText: "好听",
-      lrcUrl: "/ci/test.lrc",
+      lrcUrl: "/ci/起风了.lrc",
     },
   },
   音乐: {
     type: "music",
     config: {
       title: "音乐播放器",
-      musicUrl: "/music/test.mp3",
+      musicUrl: "/music/僕が死のうと思ったのは.mp3",
       cover: "/images/avatar.png",
       author: "未知作曲家",
       danmakuText: "好听",
-      lrcUrl: "/ci/test.lrc",
+      lrcUrl: "/ci/僕が死のうと思ったのは.lrc",
     },
   },
-  美女照片: {
-    type: "video",
+  Lemon: {
+    type: "music",
     config: {
-      title: "美女照片",
-      videoUrl: "",
-      danmakuText: "美女照片",
+      title: "Lemon",
+      musicUrl: "/music/Lemon.mp3",
+      cover: "/images/Lemon.png",
+      author: "米津玄师",
+      danmakuText: "好听",
+      lrcUrl: "/ci/Lemon.lrc",
     },
   },
-  海贼王: {
+  鲜花: {
     type: "video",
     config: {
-      title: "海贼王",
+      title: "鲜花",
       videoUrl: "",
-      danmakuText: "海贼王",
+      danmakuText: "鲜花",
     },
   },
   动漫: {
@@ -1209,10 +1203,28 @@ export default {
     // 解析LRC歌词
     const parseLrc = (lrcContent) => {
       const lyrics = [];
+      const metadata = {
+        title: null,
+        artist: null
+      };
       const lines = lrcContent.split("\n");
-      const lrcRegex = /\[(\d{2}):(\d{2})\.(\d{3})\](.*)/;
+      const lrcRegex = /\[(\d{2}):(\d{2})\.(\d{2,3})\](.*)/;
+      const metadataRegex = /\[(ti|ar):(.*?)\]/i;
 
       lines.forEach((line) => {
+        // 匹配元数据标签（ti:标题, ar:艺术家）
+        const metadataMatch = line.match(metadataRegex);
+        if (metadataMatch) {
+          const key = metadataMatch[1].toLowerCase();
+          const value = metadataMatch[2].trim();
+          if (key === 'ti') {
+            metadata.title = value;
+          } else if (key === 'ar') {
+            metadata.artist = value;
+          }
+        }
+        
+        // 匹配歌词时间戳
         const match = line.match(lrcRegex);
         if (match) {
           const minutes = parseInt(match[1]);
@@ -1229,7 +1241,10 @@ export default {
         }
       });
 
-      return lyrics.sort((a, b) => a.time - b.time);
+      return {
+        lyrics: lyrics.sort((a, b) => a.time - b.time),
+        metadata: metadata
+      };
     };
 
     // 加载歌词
@@ -1246,8 +1261,19 @@ export default {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const lrcContent = await response.text();
-        musicModal.lyrics = parseLrc(lrcContent);
+        const result = parseLrc(lrcContent);
+        
+        // 更新歌词
+        musicModal.lyrics = result.lyrics;
         musicModal.currentLyricIndex = 0;
+        
+        // 更新标题和作者（如果LRC文件中有）
+        if (result.metadata.title) {
+          musicModal.title = result.metadata.title;
+        }
+        if (result.metadata.artist) {
+          musicModal.author = result.metadata.artist;
+        }
       } catch (error) {
         console.error("加载歌词错误:", error);
         musicModal.lyrics = [];
