@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<template>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<template>
   <div id="zww-loading">
     <div id="zww-loading-center"></div>
   </div>
@@ -42,10 +42,11 @@
             />
           </div>
           <div class="welcome">
-            Hello, I'm <span class="gradientText">{{ displayName }}</span>
+            <span class="gradientText">{{ typedText }}</span>
+            <span class="typing-cursor">|</span>
           </div>
           <div class="description">
-            <span class="purpleText">{{ jobTitle.split("(")[0] }}</span>
+            <span class="purpleText">{{ jobTitle.split("(")[0] }}</span>(
             {{ jobTitle.split("(")[1] }}
           </div>
           <div class="description">
@@ -146,7 +147,7 @@
                 d="M629.333333 202.666667v213.333333h277.333334v448h-512v-213.333333h-277.333334v-448h512z m213.333334 277.333333h-213.333334v170.666667h-170.666666v149.333333h384v-320z m-277.333334-213.333333h-384v320h213.333334v-170.666667h170.666666v-149.333333z m0 213.333333h-106.666666v106.666667h106.666666v-106.666667z"
                 p-id="1892"
               ></path></svg
-            >project
+            >Site
           </div>
 
           <div class="projectList">
@@ -559,6 +560,7 @@ const TEMPL_TAGS = [
   "动漫",
   "Lemon",
   "起风了",
+  "年少有为",
 ];
 
 const tagConfigs = {
@@ -627,6 +629,17 @@ const tagConfigs = {
       lrcUrl: "/ci/Lemon.lrc",
     },
   },
+  年少有为: {
+    type: "music",
+    config: {
+      title: "年少有为",
+      musicUrl: "/music/年少有为.mp3",
+      cover: "/images/年少有为.png",
+      author: "李荣浩",
+      danmakuText: ["好听", "祝我年少有为"],
+      lrcUrl: "/ci/年少有为.lrc",
+    },
+  },
   鲜花: {
     type: "video",
     config: {
@@ -650,9 +663,44 @@ export default {
   setup() {
     // 使用App.vue中的数据
     const displayName = "抓娃娃小队长";
-    const jobTitle = "Front-end development(运维开发工程师)";
+    const jobTitle = "Front-end development (运维开发工程师)";
     const age = 27;
     const experienceLabel = "2.5 work experience (2.5年工作经验)";
+    
+    // 打字机效果
+    const typedText = ref("");
+    const fullText = `Hello, I'm ${displayName}`;
+    const typingSpeed = 100; // 打字速度（毫秒）
+    const pauseDuration = 1000; // 停顿时间（毫秒）
+    let typeTimer = null;
+    
+    onMounted(() => {
+      startTypeWriter();
+    });
+    
+    onBeforeUnmount(() => {
+      if (typeTimer) {
+        clearTimeout(typeTimer);
+      }
+    });
+    
+    const startTypeWriter = () => {
+      let index = 0;
+      const typeWriter = () => {
+        if (index < fullText.length) {
+          typedText.value = fullText.substring(0, index + 1);
+          index++;
+          typeTimer = setTimeout(typeWriter, typingSpeed);
+        } else {
+          // 打字完成后停顿1秒，然后重新开始
+          typeTimer = setTimeout(() => {
+            typedText.value = "";
+            startTypeWriter();
+          }, pauseDuration);
+        }
+      };
+      typeWriter();
+    };
 
     const socials = [
         { label: 'github', href: 'https://github.com/a739927483', svg: '/public/svg/github.svg' },
@@ -663,7 +711,7 @@ export default {
 
     const works = [
         { title: '作品集', desc: '记录作品 / Demo',href: '/' },
-        { title: '博客', desc: '随手的笔记和学习记录',href: 'https://5ec02886.r7.cpolar.cn ' },
+        { title: '博客', desc: '随手的笔记和学习记录',href: 'https://3d4857fa.r27.cpolar.top' },
         { title: '资源', desc: '常用资源、配置、模板集合',href: '/' },
         { title: '聊天室', desc: '实时交流、问题反馈入口',href: '/' },
       ];
@@ -1405,7 +1453,11 @@ export default {
 
       const newDanmakus = [];
       for (let i = 0; i < danmakuConfig.density; i++) {
-        newDanmakus.push(createDanmaku(text));
+        // 如果text是数组，随机选择一个元素
+        const danmakuText = Array.isArray(text) 
+          ? text[Math.floor(Math.random() * text.length)] 
+          : text;
+        newDanmakus.push(createDanmaku(danmakuText));
       }
 
       danmakus.value = [...currentDanmakus, ...newDanmakus];
@@ -1594,6 +1646,7 @@ export default {
       jobTitle,
       age,
       experienceLabel,
+      typedText,
       siteDate,
       exp,
       tags,
