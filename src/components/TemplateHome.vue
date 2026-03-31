@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<template>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<template>
   <div id="zww-loading">
     <div id="zww-loading-center"></div>
   </div>
@@ -561,6 +561,8 @@ const TEMPL_TAGS = [
   "Lemon",
   "起风了",
   "年少有为",
+  "当爱已成往事",
+  "山丘",
 ];
 
 const tagConfigs = {
@@ -627,6 +629,28 @@ const tagConfigs = {
       author: "米津玄师",
       danmakuText: "好听",
       lrcUrl: "/ci/Lemon.lrc",
+    },
+  },
+  山丘: {
+    type: "music",
+    config: {
+      title: "",
+      musicUrl: "/music/山丘.mp3",
+      cover: "/images/avatar.png",
+      author: "",
+      danmakuText: "好听",
+      lrcUrl: "/ci/山丘.lrc",
+    },
+  },
+  当爱已成往事: {
+    type: "music",
+    config: {
+      title: "",
+      musicUrl: "/music/当爱已成往事.mp3",
+      cover: "/images/avatar.png",
+      author: "",
+      danmakuText: "好听",
+      lrcUrl: "/ci/当爱已成往事.lrc",
     },
   },
   年少有为: {
@@ -711,7 +735,7 @@ export default {
 
     const works = [
         { title: '作品集', desc: '记录作品 / Demo',href: '/' },
-        { title: '博客', desc: '随手的笔记和学习记录',href: 'https://3d4857fa.r27.cpolar.top' },
+        { title: '博客', desc: '随手的笔记和学习记录',href: 'http://1.15.174.87/' },
         { title: '资源', desc: '常用资源、配置、模板集合',href: '/' },
         { title: '聊天室', desc: '实时交流、问题反馈入口',href: '/' },
       ];
@@ -942,36 +966,36 @@ export default {
             // 根据文件夹名称生成对应的图片路径
             if (folderPath === '/public/images/game') {
               imageConfig.images = [
-                '/public/images/game/20250128211056_1.jpg',
-                '/public/images/game/20250129225453_1.jpg',
-                '/public/images/game/云顶之亦.jpg',
-                '/public/images/game/休闲游戏.jpg',
-                '/public/images/game/休闲游戏2.jpg',
-                '/public/images/game/休闲游戏3.jpg',
-                '/public/images/game/王者荣耀1.jpg',
-                '/public/images/game/王者荣耀2.jpg'
+                '/public/images/game/20250128211056_1.webp',
+                '/public/images/game/20250129225453_1.webp',
+                '/public/images/game/云顶之亦.webp',
+                '/public/images/game/休闲游戏.webp',
+                '/public/images/game/休闲游戏2.webp',
+                '/public/images/game/休闲游戏3.webp',
+                '/public/images/game/王者荣耀1.webp',
+                '/public/images/game/王者荣耀2.webp'
               ];
             } else if (folderPath === '/public/images/cook') {
               imageConfig.images = [
-                '/public/images/cook/i1.jpg',
-                '/public/images/cook/i2.jpg',
-                '/public/images/cook/i3.jpg'
+                '/public/images/cook/i1.webp',
+                '/public/images/cook/i2.webp',
+                '/public/images/cook/i3.webp'
               ];
             } else if (folderPath === '/public/images/delicacy') {
               imageConfig.images = [
-                '/public/images/delicacy/i1.jpg',
-                '/public/images/delicacy/i2.jpg'
+                '/public/images/delicacy/i1.webp',
+                '/public/images/delicacy/i2.webp'
               ];
             } else if (folderPath === '/public/images/tour') {
               imageConfig.images = [
-                '/public/images/tour/i1.jpg',
-                '/public/images/tour/i2.jpg',
-                '/public/images/tour/i3.jpg',
-                '/public/images/tour/ss.jpg'
+                '/public/images/tour/i1.webp',
+                '/public/images/tour/i2.webp',
+                '/public/images/tour/i3.webp',
+                '/public/images/tour/ss.webp'
               ];
             } else {
-              // 默认方案：使用i1.jpg命名方式
-              imageConfig.images = Array.from({length: 10}, (_, i) => `${folderPath}/i${i + 1}.jpg`);
+              // 默认方案：使用i1.webp命名方式
+              imageConfig.images = Array.from({length: 10}, (_, i) => `${folderPath}/i${i + 1}.webp`);
             }
           }
           
