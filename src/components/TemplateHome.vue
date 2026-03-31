@@ -1,7 +1,7 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<template>
-  <div id="zww-loading">
-    <div id="zww-loading-center"></div>
-  </div>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<template>
+  <!-- 加载动画组件 -->
+  <LoadingAnimation :isVisible="isLoading" />
+  
   <div class="zww-filter"></div>
   <div class="zww-background" id="zww-background"></div>
 
@@ -549,6 +549,7 @@ import {
   ref,
   nextTick,
 } from "vue";
+import LoadingAnimation from "./LoadingAnimation.vue";
 
 const TEMPL_TAGS = [
   "做饭",
@@ -684,12 +685,25 @@ const tagConfigs = {
 
 export default {
   name: "TemplateHome",
+  components: {
+    LoadingAnimation,
+  },
   setup() {
     // 使用App.vue中的数据
     const displayName = "抓娃娃小队长";
     const jobTitle = "Front-end development (运维开发工程师)";
     const age = 27;
     const experienceLabel = "2.5 work experience (2.5年工作经验)";
+    
+    // 加载动画状态
+    const isLoading = ref(true);
+    
+    onMounted(() => {
+      // 2.5秒后隐藏加载动画
+      setTimeout(() => {
+        isLoading.value = false;
+      }, 2500);
+    });
     
     // 打字机效果
     const typedText = ref("");
@@ -1670,6 +1684,7 @@ export default {
       jobTitle,
       age,
       experienceLabel,
+      isLoading,
       typedText,
       siteDate,
       exp,
